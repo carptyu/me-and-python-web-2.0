@@ -1,0 +1,877 @@
+import React, { useState, useRef, useEffect } from 'react';
+import Navbar from './components/Navbar';
+import SnakeCard from './components/SnakeCard';
+import AIAssistant from './components/AIAssistant';
+import { FEATURED_SNAKES, ARTICLES } from './constants';
+import { Snake, Article, Gender, Availability } from './types';
+import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, X, ZoomIn, ChevronLeft, Plus, Trash2, Upload, Save, Camera } from 'lucide-react';
+
+const App: React.FC = () => {
+  // Navigation State
+  const [history, setHistory] = useState<string[]>(['home']);
+  const [currentPage, setCurrentPage] = useState('home');
+  
+  // Data State (Now Persistent with LocalStorage)
+  const [snakes, setSnakes] = useState<Snake[]>(() => {
+    try {
+      const savedSnakes = localStorage.getItem('snakes');
+      return savedSnakes ? JSON.parse(savedSnakes) : FEATURED_SNAKES;
+    } catch (e) {
+      console.error("Failed to load snakes from local storage", e);
+      return FEATURED_SNAKES;
+    }
+  });
+
+  // Save snakes to LocalStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem('snakes', JSON.stringify(snakes));
+  }, [snakes]);
+
+  const [selectedSnake, setSelectedSnake] = useState<Snake | null>(null);
+  const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
+  
+  // Lightbox State
+  const [lightboxOpen, setLightboxOpen] = useState(false);
+  const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+  const [lightboxIndex, setLightboxIndex] = useState(0);
+
+  // Scroll Restoration Cache
+  const scrollCache = useRef<{ [key: string]: number }>({});
+
+  // Enhanced Navigation Handler
+  const navigateTo = (page: string, data?: { snake?: Snake, article?: Article }) => {
+    if (page === currentPage) return;
+
+    scrollCache.current[currentPage] = window.scrollY;
+
+    if (['snake-detail', 'article-detail', 'admin'].includes(page)) {
+      scrollCache.current[page] = 0;
+    }
+
+    setHistory(prev => [...prev, page]);
+    setCurrentPage(page);
+    
+    if (data?.snake) setSelectedSnake(data.snake);
+    if (data?.article) setSelectedArticle(data.article);
+
+    if (!['snake-detail', 'article-detail'].includes(page)) {
+      setSelectedSnake(null);
+      setSelectedArticle(null);
+    }
+
+    setTimeout(() => {
+      if (scrollCache.current[page] !== undefined) {
+        window.scrollTo({ top: scrollCache.current[page], behavior: 'auto' }); 
+      } else {
+        window.scrollTo({ top: 0, behavior: 'auto' });
+      }
+    }, 0);
+  };
+
+  const goBack = () => {
+    if (history.length > 1) {
+      scrollCache.current[currentPage] = window.scrollY;
+
+      const newHistory = [...history];
+      newHistory.pop(); 
+      const previousPage = newHistory[newHistory.length - 1];
+      
+      setHistory(newHistory);
+      setCurrentPage(previousPage);
+      
+      if (currentPage === 'snake-detail') setSelectedSnake(null);
+      if (currentPage === 'article-detail') setSelectedArticle(null);
+
+      setTimeout(() => {
+        const savedScrollY = scrollCache.current[previousPage];
+        if (savedScrollY !== undefined) {
+           window.scrollTo({ top: savedScrollY, behavior: 'auto' });
+        } else {
+           window.scrollTo(0, 0);
+        }
+      }, 0);
+    } else {
+      setCurrentPage('home');
+    }
+  };
+
+  // --- Lightbox Logic ---
+  const openLightbox = (images: string[], index: number = 0) => {
+    setLightboxImages(images);
+    setLightboxIndex(index);
+    setLightboxOpen(true);
+  };
+
+  const closeLightbox = () => {
+    setLightboxOpen(false);
+    setLightboxImages([]);
+  };
+
+  const nextImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setLightboxIndex((prev) => (prev + 1) % lightboxImages.length);
+  };
+
+  const prevImage = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length);
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (!lightboxOpen) return;
+      if (e.key === 'Escape') closeLightbox();
+      if (e.key === 'ArrowRight') nextImage();
+      if (e.key === 'ArrowLeft') prevImage();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [lightboxOpen, lightboxImages]);
+
+
+  // --- Admin Actions ---
+  const handleAddSnake = (newSnake: Snake) => {
+    setSnakes(prev => [newSnake, ...prev]);
+    navigateTo('shop');
+    // alert('商品已成功上架！'); // Removed alert for smoother UX
+  };
+
+  const handleDeleteSnake = (id: string) => {
+    if (confirm('確定要下架此商品嗎？')) {
+      setSnakes(prev => prev.filter(s => s.id !== id));
+    }
+  };
+
+  const handleConstruction = () => navigateTo('maintenance');
+  const handleViewDetails = (snake: Snake) => navigateTo('snake-detail', { snake });
+  const handleViewArticle = (article: Article) => navigateTo('article-detail', { article });
+
+  // --- Sub-Components ---
+
+  // Admin Dashboard Component (The "CMS" Simulation)
+  const AdminDashboard = () => {
+    const [isAdding, setIsAdding] = useState(false);
+    const [formData, setFormData] = useState<Partial<Snake>>({
+      morph: '',
+      price: 0,
+      weight: 100,
+      gender: Gender.Male,
+      description: '',
+      imageUrl: ''
+    });
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      if (e.target.files && e.target.files[0]) {
+        // Create a local URL for preview (simulating upload)
+        const url = URL.createObjectURL(e.target.files[0]);
+        setFormData(prev => ({ ...prev, imageUrl: url }));
+      }
+    };
+
+    const handleSubmit = (e: React.FormEvent) => {
+      e.preventDefault();
+      const newSnake: Snake = {
+        id: `BP-${Math.floor(Math.random() * 1000)}`, // Random ID
+        morph: formData.morph || 'Unknown Morph',
+        scientificName: 'Python regius',
+        price: formData.price || 0,
+        gender: formData.gender || Gender.Male,
+        weight: formData.weight || 0,
+        hatchDate: new Date().toISOString().split('T')[0],
+        genetics: [formData.morph?.split(' ')[0] || 'Normal'],
+        diet: '冷凍解凍鼠',
+        availability: Availability.Available,
+        description: formData.description || 'No description provided.',
+        imageUrl: formData.imageUrl || 'https://picsum.photos/seed/new/800/800',
+        images: formData.imageUrl ? [formData.imageUrl] : []
+      };
+      handleAddSnake(newSnake);
+      setIsAdding(false); // Close modal after add
+    };
+
+    return (
+      <div className="min-h-screen bg-concrete-100 pt-20 pb-20 px-4">
+        <div className="max-w-5xl mx-auto">
+          <div className="flex justify-between items-center mb-8">
+            <div>
+              <h1 className="text-3xl font-bold text-concrete-900">後台管理系統</h1>
+              <p className="text-concrete-500 text-sm mt-1">CMS Dashboard Mode (Local Storage)</p>
+            </div>
+            {!isAdding && (
+              <button 
+                onClick={() => setIsAdding(true)}
+                className="bg-urban-green text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-urban-lightGreen transition shadow-lg"
+              >
+                <Plus size={18} /> 新增商品
+              </button>
+            )}
+          </div>
+
+          {isAdding ? (
+            <div className="bg-white rounded-2xl p-6 md:p-8 shadow-xl border border-concrete-200 animate-slide-up">
+              <div className="flex justify-between items-center mb-6 border-b border-concrete-100 pb-4">
+                <h2 className="text-xl font-bold text-concrete-900 flex items-center gap-2">
+                  <Upload size={20} className="text-urban-green" /> 上架新球蟒
+                </h2>
+                <button onClick={() => setIsAdding(false)} className="text-concrete-400 hover:text-concrete-900"><X size={24} /></button>
+              </div>
+
+              <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Image Upload Area */}
+                <div 
+                  className="w-full aspect-video bg-concrete-50 border-2 border-dashed border-concrete-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-urban-green hover:bg-urban-green/5 transition-all relative overflow-hidden group"
+                  onClick={() => fileInputRef.current?.click()}
+                >
+                  {formData.imageUrl ? (
+                    <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-contain" />
+                  ) : (
+                    <div className="text-center text-concrete-400 group-hover:text-urban-green transition-colors">
+                      <Camera size={48} className="mx-auto mb-2" />
+                      <p className="font-medium">點擊上傳照片 / 拍攝</p>
+                      <p className="text-xs mt-1 opacity-70">支援 JPG, PNG (模擬)</p>
+                    </div>
+                  )}
+                  <input 
+                    type="file" 
+                    ref={fileInputRef} 
+                    className="hidden" 
+                    accept="image/*" 
+                    onChange={handleFileChange}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div>
+                    <label className="block text-xs font-bold text-concrete-500 uppercase tracking-wider mb-2">品系名稱 (Morph)</label>
+                    <input 
+                      required
+                      type="text" 
+                      value={formData.morph}
+                      onChange={e => setFormData({...formData, morph: e.target.value})}
+                      placeholder="例如: Banana Pied"
+                      className="w-full bg-concrete-50 border border-concrete-200 rounded-lg p-3 text-concrete-900 focus:ring-2 focus:ring-urban-green/20 focus:border-urban-green outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-concrete-500 uppercase tracking-wider mb-2">價格 (NTD)</label>
+                    <input 
+                      required
+                      type="number" 
+                      value={formData.price || ''}
+                      onChange={e => setFormData({...formData, price: Number(e.target.value)})}
+                      placeholder="35000"
+                      className="w-full bg-concrete-50 border border-concrete-200 rounded-lg p-3 text-concrete-900 focus:ring-2 focus:ring-urban-green/20 focus:border-urban-green outline-none"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-concrete-500 uppercase tracking-wider mb-2">性別</label>
+                    <select 
+                      value={formData.gender}
+                      onChange={e => setFormData({...formData, gender: e.target.value as Gender})}
+                      className="w-full bg-concrete-50 border border-concrete-200 rounded-lg p-3 text-concrete-900 outline-none"
+                    >
+                      <option value={Gender.Male}>公 (Male)</option>
+                      <option value={Gender.Female}>母 (Female)</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label className="block text-xs font-bold text-concrete-500 uppercase tracking-wider mb-2">體重 (g)</label>
+                    <input 
+                      type="number"
+                      value={formData.weight || ''}
+                      onChange={e => setFormData({...formData, weight: Number(e.target.value)})}
+                      className="w-full bg-concrete-50 border border-concrete-200 rounded-lg p-3 text-concrete-900 outline-none"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-concrete-500 uppercase tracking-wider mb-2">商品描述</label>
+                  <textarea 
+                    rows={4}
+                    value={formData.description}
+                    onChange={e => setFormData({...formData, description: e.target.value})}
+                    placeholder="描述這隻蛇的特徵、個性..."
+                    className="w-full bg-concrete-50 border border-concrete-200 rounded-lg p-3 text-concrete-900 focus:ring-2 focus:ring-urban-green/20 focus:border-urban-green outline-none resize-none"
+                  />
+                </div>
+
+                <div className="flex gap-4 pt-4">
+                   <button 
+                     type="button" 
+                     onClick={() => setIsAdding(false)}
+                     className="flex-1 py-3 rounded-lg border border-concrete-200 text-concrete-600 font-bold hover:bg-concrete-50 transition-colors"
+                   >
+                     取消
+                   </button>
+                   <button 
+                     type="submit" 
+                     className="flex-1 py-3 rounded-lg bg-concrete-900 text-white font-bold hover:bg-black transition-colors flex justify-center items-center gap-2"
+                   >
+                     <Save size={18} /> 發布上架
+                   </button>
+                </div>
+              </form>
+            </div>
+          ) : (
+            <div className="bg-white rounded-2xl shadow-sm border border-concrete-200 overflow-hidden">
+              <div className="overflow-x-auto">
+                <table className="w-full text-left">
+                  <thead className="bg-concrete-50 text-xs uppercase text-concrete-500 font-bold">
+                    <tr>
+                      <th className="p-4">圖片</th>
+                      <th className="p-4">ID / 品系</th>
+                      <th className="p-4">價格</th>
+                      <th className="p-4">狀態</th>
+                      <th className="p-4 text-right">操作</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-concrete-100">
+                    {snakes.map(snake => (
+                      <tr key={snake.id} className="hover:bg-concrete-50/50 transition-colors">
+                        <td className="p-4">
+                          <div className="w-12 h-12 rounded-lg overflow-hidden bg-concrete-100">
+                            <img src={snake.imageUrl} alt="" className="w-full h-full object-cover" />
+                          </div>
+                        </td>
+                        <td className="p-4">
+                          <div className="font-bold text-concrete-900">{snake.morph}</div>
+                          <div className="text-xs text-concrete-400 font-mono">{snake.id}</div>
+                        </td>
+                        <td className="p-4 font-mono text-concrete-600">
+                          ${snake.price.toLocaleString()}
+                        </td>
+                        <td className="p-4">
+                           <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${
+                             snake.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                           }`}>
+                             {snake.availability}
+                           </span>
+                        </td>
+                        <td className="p-4 text-right">
+                          <button 
+                            onClick={() => handleDeleteSnake(snake.id)}
+                            className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-full transition-colors"
+                          >
+                            <Trash2 size={18} />
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+    );
+  };
+
+  const MaintenanceView = () => (
+    <div className="min-h-screen bg-concrete-100 flex flex-col items-center justify-center px-6 relative overflow-hidden">
+      <div className="absolute inset-0 opacity-5 pointer-events-none" 
+           style={{
+             backgroundImage: 'repeating-linear-gradient(45deg, #000 0, #000 10px, transparent 10px, transparent 20px)'
+           }}>
+      </div>
+      <div className="max-w-md w-full bg-white border-2 border-concrete-900 p-8 rounded-none shadow-[8px_8px_0px_0px_rgba(24,24,27,1)] relative z-10 animate-slide-up">
+         <div className="absolute -top-6 left-1/2 transform -translate-x-1/2 bg-yellow-500 text-concrete-900 px-4 py-1 font-bold text-xs tracking-widest uppercase border-2 border-concrete-900">
+            Under Construction
+         </div>
+         <div className="flex justify-center mb-6 text-concrete-800">
+            <Construction size={64} strokeWidth={1.5} />
+         </div>
+         <h2 className="text-2xl font-bold text-center text-concrete-900 mb-4">
+            棲息地建構中
+         </h2>
+         <p className="text-concrete-500 text-center mb-8 leading-relaxed">
+            我們的工程團隊正在為這個區域鋪設加溫墊與調整濕度。
+         </p>
+         <div className="space-y-3">
+            <button 
+              onClick={goBack}
+              className="w-full bg-concrete-900 text-white font-bold py-3 flex items-center justify-center gap-2 hover:bg-concrete-800 transition-colors"
+            >
+              <ArrowLeft size={16} />
+              撤退 (返回上一頁)
+            </button>
+            <button 
+              onClick={() => navigateTo('home')}
+              className="w-full bg-white text-concrete-900 border-2 border-concrete-200 font-bold py-3 hover:bg-concrete-50 transition-colors"
+            >
+              回到首頁大廳
+            </button>
+         </div>
+      </div>
+    </div>
+  );
+
+  const Hero = () => (
+    <div className="relative w-full min-h-screen flex flex-col items-center justify-center pt-20 pb-10 overflow-hidden bg-concrete-100">
+      <div className="text-center px-6 max-w-4xl mx-auto z-10 animate-slide-up opacity-0 flex flex-col items-center" style={{animationDelay: '0.1s'}}>
+        <h2 className="text-urban-green font-bold text-xs md:text-sm mb-4 tracking-[0.2em] uppercase bg-urban-green/10 px-3 py-1 rounded-full">Urban Jungle Collection</h2>
+        <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold text-concrete-900 mb-6 tracking-tight leading-[1.1]">
+          城市綠洲。<br className="hidden md:block" />
+          <span className="text-concrete-400">迷蟒陪伴。</span>
+        </h1>
+        <p className="text-lg md:text-2xl text-concrete-500 font-light max-w-2xl mx-auto mb-10">
+          在水泥叢林中，尋找屬於你的寧靜角落。Me&Python，來自頂尖基因庫的藝術品。
+        </p>
+        <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-6 sm:px-0">
+          <button 
+            onClick={() => navigateTo('shop')}
+            className="bg-concrete-900 text-white rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl w-full sm:w-auto"
+          >
+            探索現貨
+          </button>
+          <button 
+            onClick={() => navigateTo('about')}
+            className="bg-white text-concrete-900 border border-concrete-200 rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-50 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
+          >
+            了解更多 <ChevronRight size={14} />
+          </button>
+        </div>
+      </div>
+      <div className="absolute inset-0 z-0 opacity-10 pointer-events-none">
+         <div className="w-full h-full bg-[url('https://www.transparenttextures.com/patterns/concrete-wall.png')]"></div>
+      </div>
+    </div>
+  );
+
+  const BentoGrid = () => (
+    <div className="bg-white py-24 md:py-32 border-t border-concrete-200">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-4">不只是爬蟲。</h2>
+          <p className="text-concrete-500 text-lg">更是現代居家美學的一部分。</p>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
+           <div className="md:col-span-2 lg:col-span-2 bg-concrete-100 rounded-2xl overflow-hidden h-[300px] md:h-[500px] relative group" onClick={handleConstruction}>
+             <div className="absolute inset-0 z-10 p-8 md:p-10 flex flex-col justify-end bg-gradient-to-t from-concrete-900/80 to-transparent cursor-pointer">
+                <p className="text-white/80 uppercase text-xs font-bold tracking-widest mb-2">GENETICS</p>
+                <h3 className="text-2xl md:text-3xl font-bold text-white">極致的基因美學。</h3>
+             </div>
+             <img src="https://picsum.photos/seed/genetics1/1200/800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 grayscale-[30%]" />
+           </div>
+           <div className="bg-concrete-800 rounded-2xl overflow-hidden h-[300px] md:h-[500px] relative group">
+              <div className="absolute inset-0 z-10 p-8 md:p-10 flex flex-col justify-start items-center text-center">
+                <h3 className="text-2xl md:text-3xl font-bold text-white mt-4 mb-2">專業支援</h3>
+                <p className="text-concrete-300">24/7 全天候 AI 顧問。</p>
+             </div>
+             <img src="https://picsum.photos/seed/support/600/800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-40 mix-blend-overlay" />
+           </div>
+           <div className="bg-concrete-50 border border-concrete-200 rounded-2xl p-8 flex flex-col justify-between group cursor-pointer hover:border-urban-green/50 transition-colors" onClick={handleConstruction}>
+             <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-sm mb-4">
+                <Instagram size={24} className="text-concrete-900" />
+             </div>
+             <div>
+               <h4 className="text-xl font-bold text-concrete-900">社群</h4>
+               <p className="text-concrete-500 mt-1 text-sm">加入 50k+ 都市飼養者行列。</p>
+             </div>
+           </div>
+           <div className="lg:col-span-2 bg-urban-green/10 border border-urban-green/20 rounded-2xl overflow-hidden relative flex items-center justify-between p-8 md:p-10 group cursor-pointer hover:bg-urban-green/15 transition-colors" onClick={() => navigateTo('shop')}>
+             <div className="z-10 max-w-md">
+                <h4 className="text-2xl md:text-3xl font-bold text-urban-green mb-2">本週新進</h4>
+                <p className="text-concrete-600">探索最新孵化的球蟒，尋找您的夢幻品系。</p>
+                <span className="inline-block mt-4 text-concrete-900 font-bold text-sm border-b border-concrete-900 pb-0.5">立即選購</span>
+             </div>
+             <div className="absolute right-0 top-0 h-full w-1/2">
+                <img src="https://picsum.photos/seed/newarrivals/600/400" className="h-full w-full object-cover opacity-100 mask-image-gradient-left" style={{maskImage: 'linear-gradient(to left, black 0%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to left, black 0%, transparent 100%)'}} />
+             </div>
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const ShopPage = () => (
+    <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
+       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-concrete-200 pb-8">
+            <div>
+              <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-3">選購您的夥伴。</h1>
+              <p className="text-lg text-concrete-500">在安靜的都市角落，它是最完美的藝術品。</p>
+            </div>
+            <div className="mt-6 md:mt-0 flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-2">
+               <button className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-concrete-900 text-white border-concrete-900">
+                 全部顯示
+               </button>
+               {['隱性基因', '共顯性', '投資等級'].map((filter, i) => (
+                 <button 
+                    key={i} 
+                    onClick={handleConstruction}
+                    className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-white text-concrete-600 border-concrete-200 hover:border-concrete-400 hover:text-concrete-900"
+                 >
+                   {filter}
+                 </button>
+               ))}
+            </div>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+             {snakes.map(snake => (
+               <SnakeCard key={snake.id} snake={snake} onViewDetails={handleViewDetails} />
+             ))}
+          </div>
+       </div>
+    </div>
+  );
+
+  const SnakeDetail = () => {
+    if (!selectedSnake) return null;
+    
+    // Normalize images array
+    const galleryImages = selectedSnake.images && selectedSnake.images.length > 0 
+      ? selectedSnake.images 
+      : [selectedSnake.imageUrl];
+
+    return (
+      <div className="bg-white min-h-screen pt-20 pb-20 animate-fade-in">
+        <div className="sticky top-16 md:top-0 z-30 bg-white/90 backdrop-blur-md border-b border-concrete-100 py-3 px-4 sm:px-8 mb-8 shadow-sm">
+          <div className="max-w-7xl mx-auto flex justify-between items-center">
+             <h2 className="font-bold text-base md:text-lg text-concrete-900 truncate max-w-[150px] sm:max-w-none">{selectedSnake.morph}</h2>
+             <div className="flex items-center gap-3">
+               <span className="text-sm font-mono font-bold text-concrete-600 hidden sm:block">NT$ {selectedSnake.price.toLocaleString()}</span>
+               <button onClick={handleConstruction} className="bg-urban-green text-white text-xs md:text-sm px-4 md:px-6 py-2 rounded-lg font-medium hover:bg-urban-lightGreen transition shadow-sm">立即購買</button>
+               <button onClick={goBack} className="bg-concrete-100 p-2 rounded-lg text-concrete-500 hover:text-concrete-900" aria-label="Close"><ChevronRight className="rotate-90" size={18} /></button>
+             </div>
+          </div>
+        </div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col lg:flex-row gap-8 lg:gap-16">
+            {/* Left: Images */}
+            <div className="flex-1 space-y-4 md:space-y-6">
+              {/* Main Image */}
+              <div 
+                className="aspect-[4/3] rounded-2xl overflow-hidden bg-concrete-100 border border-concrete-200 group relative cursor-zoom-in"
+                onClick={() => openLightbox(galleryImages, 0)}
+              >
+                <img src={galleryImages[0]} alt={selectedSnake.morph} className="w-full h-full object-cover" />
+                <div className="absolute bottom-4 right-4 bg-black/50 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition-opacity">
+                   <ZoomIn size={20} />
+                </div>
+              </div>
+              
+              {/* Thumbnails */}
+              {galleryImages.length > 1 && (
+                <div className="grid grid-cols-3 gap-4">
+                   {galleryImages.map((img, idx) => (
+                     <div 
+                       key={idx}
+                       className="aspect-square rounded-xl bg-concrete-100 overflow-hidden cursor-zoom-in relative group border border-transparent hover:border-urban-green transition-all"
+                       onClick={() => openLightbox(galleryImages, idx)}
+                     >
+                        <img src={img} className="w-full h-full object-cover" />
+                     </div>
+                   ))}
+                </div>
+              )}
+            </div>
+
+            {/* Right: Specs */}
+            <div className="lg:w-[450px] flex-shrink-0">
+               <div className="py-4 md:py-8 border-b border-concrete-100">
+                 <h3 className="text-urban-green text-xs font-bold uppercase tracking-widest mb-2">Collection</h3>
+                 <h1 className="text-3xl md:text-4xl font-bold text-concrete-900 mb-4">{selectedSnake.morph}</h1>
+                 <p className="text-concrete-500 leading-relaxed text-sm md:text-base">{selectedSnake.description}</p>
+               </div>
+
+               <div className="py-6 border-b border-concrete-100 space-y-4 bg-concrete-50/50 rounded-xl px-6 mt-6">
+                 <h4 className="text-concrete-900 font-bold text-sm uppercase tracking-wide mb-4">詳細數據</h4>
+                 <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                    <span className="text-concrete-400">編號</span>
+                    <span className="text-concrete-900 font-mono">{selectedSnake.id}</span>
+                 </div>
+                 <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                    <span className="text-concrete-400">基因</span>
+                    <span className="text-concrete-900 font-medium text-right">{selectedSnake.genetics.join(' + ')}</span>
+                 </div>
+                 <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                    <span className="text-concrete-400">孵化日期</span>
+                    <span className="text-concrete-900">{selectedSnake.hatchDate}</span>
+                 </div>
+                 <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                    <span className="text-concrete-400">體重</span>
+                    <span className="text-concrete-900">{selectedSnake.weight}g</span>
+                 </div>
+                 <div className="flex justify-between text-sm pt-2">
+                    <span className="text-concrete-400">目前食譜</span>
+                    <span className="text-concrete-900">{selectedSnake.diet}</span>
+                 </div>
+               </div>
+
+               <div className="py-8">
+                 <div className="bg-concrete-50 border border-concrete-200 rounded-xl p-6 text-center">
+                    <div className="flex items-center justify-center gap-2 text-concrete-500 text-xs mb-4">
+                        <MapPin size={14} />
+                        <span>提供全台安全寄送服務</span>
+                    </div>
+                    <button 
+                      onClick={handleConstruction}
+                      className="w-full bg-concrete-900 hover:bg-black text-white font-bold py-4 rounded-lg transition-all shadow-lg hover:shadow-xl mb-3 transform active:scale-[0.98]"
+                    >
+                      加入購物車 - NT$ {selectedSnake.price.toLocaleString()}
+                    </button>
+                    <button 
+                      onClick={handleConstruction}
+                      className="text-concrete-500 text-sm hover:text-concrete-900 transition-colors"
+                    >
+                      詢問細節
+                    </button>
+                 </div>
+               </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const BlogPage = () => (
+    <div className="pt-24 pb-20 bg-concrete-50 min-h-screen px-4">
+      <div className="max-w-4xl mx-auto text-center mb-12">
+        <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-4">飼養日誌。</h1>
+        <p className="text-lg text-concrete-500">關於飼養技巧、基因知識與爬蟲生活方式。</p>
+      </div>
+      <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
+        {ARTICLES.map((article, index) => (
+          <div 
+            key={article.id} 
+            onClick={() => handleViewArticle(article)}
+            className={`group cursor-pointer flex flex-col bg-white rounded-2xl overflow-hidden shadow-sm hover:shadow-lg transition-all border border-concrete-100 ${index === 0 ? 'md:col-span-2' : ''}`}
+          >
+             <div className={`relative overflow-hidden ${index === 0 ? 'aspect-video md:aspect-[21/9]' : 'aspect-[3/2]'}`}>
+               <img src={article.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
+             </div>
+             <div className="p-6 md:p-8">
+                <div className="flex items-center gap-3 mb-3">
+                  <span className="text-xs font-bold text-urban-green bg-urban-green/10 px-2 py-1 rounded uppercase tracking-wider">{article.tags[0]}</span>
+                  <span className="text-xs text-concrete-400">{article.date}</span>
+                </div>
+                <h3 className={`font-bold text-concrete-900 mb-3 group-hover:text-urban-green transition-colors ${index === 0 ? 'text-2xl md:text-3xl' : 'text-xl md:text-2xl'}`}>
+                  {article.title}
+                </h3>
+                <p className="text-concrete-500 line-clamp-2 leading-relaxed text-sm md:text-base">{article.excerpt}</p>
+                <div className="mt-4 flex items-center text-concrete-900 font-medium text-sm group-hover:translate-x-2 transition-transform">
+                    閱讀全文 <ArrowRight size={14} className="ml-2" />
+                </div>
+             </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+
+  const ArticleDetail = () => {
+    if (!selectedArticle) return null;
+    return (
+      <div className="bg-white min-h-screen pt-24 pb-20 px-4 animate-fade-in">
+        <div className="max-w-3xl mx-auto">
+           <button onClick={goBack} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
+             <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
+           </button>
+           <h1 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-6 leading-tight">{selectedArticle.title}</h1>
+           <div className="flex items-center gap-4 border-b border-concrete-200 pb-8 mb-10">
+             <div className="w-12 h-12 bg-concrete-200 rounded-full flex items-center justify-center text-concrete-500 font-bold">MP</div>
+             <div>
+               <div className="text-concrete-900 text-sm font-bold">{selectedArticle.author}</div>
+               <div className="text-concrete-400 text-xs">{selectedArticle.date}</div>
+             </div>
+           </div>
+           <img src={selectedArticle.imageUrl} className="w-full aspect-video object-cover rounded-2xl mb-12 shadow-lg" />
+           <div 
+             className="prose prose-zinc prose-lg prose-headings:font-bold prose-a:text-urban-green max-w-none"
+             dangerouslySetInnerHTML={{ __html: selectedArticle.content }}
+           />
+        </div>
+      </div>
+    );
+  };
+
+  const AboutPage = () => (
+    <div className="bg-white min-h-screen pt-24 pb-20 px-4">
+      <div className="max-w-3xl mx-auto text-center mb-20">
+         <h1 className="text-4xl md:text-6xl font-bold text-concrete-900 mb-6">生於都市。<br/>源於自然。</h1>
+         <p className="text-xl text-concrete-500 leading-relaxed font-light">
+           我們不只是繁殖者。我們致力於推廣一種將自然美學融入現代生活的風格。
+         </p>
+      </div>
+      <div className="max-w-5xl mx-auto space-y-24 md:space-y-32">
+        <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
+           <div className="flex-1 order-2 md:order-1">
+              <h3 className="text-2xl md:text-3xl font-bold text-concrete-900 mb-4">嚴格的環境控管。</h3>
+              <p className="text-base md:text-lg text-concrete-500 leading-relaxed">
+                從產卵的那一刻起，每一個變數都在監控之中。溫度、濕度、墊材品質。我們相信，優質的基因值得在最完美的環境中成長。就像你在都市中追求的生活品質一樣。
+              </p>
+           </div>
+           <div className="flex-1 order-1 md:order-2 w-full">
+              <img src="https://picsum.photos/seed/about1/800/600" className="rounded-2xl w-full shadow-lg" />
+           </div>
+        </div>
+        <div className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16">
+           <div className="flex-1 order-2 md:order-1">
+              <h3 className="text-2xl md:text-3xl font-bold text-concrete-900 mb-4">基因純度保證。</h3>
+              <p className="text-base md:text-lg text-concrete-500 leading-relaxed">
+                沒有猜測。我們使用最新的基因測試和系譜追蹤，確保當您購買「Het Clown」時，它是 100% 保證的。這是一份科學的承諾，也是對生命的尊重。
+              </p>
+           </div>
+           <div className="flex-1 order-1 md:order-2 w-full">
+              <img src="https://picsum.photos/seed/about2/800/600" className="rounded-2xl w-full shadow-lg" />
+           </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  const Footer = () => (
+    <footer className="bg-concrete-50 pt-16 pb-8 border-t border-concrete-200 text-xs">
+      <div className="max-w-5xl mx-auto px-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
+          <div>
+            <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">線上商店</h4>
+            <ul className="space-y-3 text-concrete-500">
+              <li><button onClick={() => navigateTo('shop')} className="hover:text-concrete-900 transition-colors">全部商品</button></li>
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">公蛇 (Males)</button></li>
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">母蛇 (Females)</button></li>
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">周邊商品</button></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">客戶服務</h4>
+            <ul className="space-y-3 text-concrete-500">
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">飼養指南</button></li>
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">運送政策</button></li>
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">活體抵達保證</button></li>
+              <li><button onClick={() => navigateTo('admin')} className="hover:text-urban-green transition-colors">管理員登入 (模擬)</button></li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">品牌價值</h4>
+            <ul className="space-y-3 text-concrete-500">
+              <li><button onClick={() => navigateTo('about')} className="hover:text-concrete-900 transition-colors">品牌理念</button></li>
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">永續發展</button></li>
+              <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">隱私權條款</button></li>
+            </ul>
+          </div>
+           <div>
+            <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">關注我們</h4>
+            <div className="flex gap-4 text-concrete-400">
+              <Instagram size={20} onClick={handleConstruction} className="hover:text-urban-green cursor-pointer transition-colors" />
+              <Twitter size={20} onClick={handleConstruction} className="hover:text-urban-green cursor-pointer transition-colors" />
+              <Mail size={20} onClick={handleConstruction} className="hover:text-urban-green cursor-pointer transition-colors" />
+            </div>
+          </div>
+        </div>
+        
+        <div className="pt-8 border-t border-concrete-200 flex flex-col md:flex-row justify-between text-concrete-400 items-center gap-4 md:gap-0">
+          <p>Copyright © 2024 Me&Python Inc. All rights reserved.</p>
+          <div className="flex gap-6">
+            <button onClick={handleConstruction} className="hover:text-concrete-600 transition-colors">隱私權政策</button>
+            <button onClick={handleConstruction} className="hover:text-concrete-600 transition-colors">使用條款</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+  );
+
+  return (
+    <div className="bg-concrete-50 text-concrete-900 min-h-screen font-sans selection:bg-urban-green/20 selection:text-urban-green">
+      <Navbar 
+        currentPage={currentPage} 
+        setPage={(page) => navigateTo(page)} 
+        canGoBack={history.length > 1} 
+        onGoBack={goBack}
+      />
+
+      <main>
+        {currentPage === 'maintenance' ? (
+          <MaintenanceView />
+        ) : currentPage === 'snake-detail' && selectedSnake ? (
+          <SnakeDetail />
+        ) : currentPage === 'article-detail' && selectedArticle ? (
+           <ArticleDetail />
+        ) : currentPage === 'admin' ? (
+           <AdminDashboard />
+        ) : (
+          <>
+            {currentPage === 'home' && (
+              <>
+                <Hero />
+                <BentoGrid />
+              </>
+            )}
+            {currentPage === 'shop' && <ShopPage />}
+            {currentPage === 'blog' && <BlogPage />}
+            {currentPage === 'about' && <AboutPage />}
+          </>
+        )}
+      </main>
+      
+      {/* Enhanced Lightbox Overlay */}
+      {lightboxOpen && lightboxImages.length > 0 && (
+        <div 
+          className="fixed inset-0 z-[60] bg-black/95 backdrop-blur-sm flex items-center justify-center p-4 animate-fade-in"
+          onClick={closeLightbox}
+        >
+           {/* Close Button */}
+           <button 
+             className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/10 rounded-full p-2 z-20"
+             onClick={closeLightbox}
+           >
+             <X size={32} />
+           </button>
+
+           {/* Main Image Container */}
+           <div 
+             className="relative w-full h-full flex items-center justify-center"
+             onClick={(e) => e.stopPropagation()}
+           >
+             {/* Navigation - Prev */}
+             {lightboxImages.length > 1 && (
+               <button 
+                 onClick={prevImage}
+                 className="absolute left-2 md:left-8 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-10"
+               >
+                 <ChevronLeft size={40} />
+               </button>
+             )}
+
+             {/* Image */}
+             <div className="relative max-w-full max-h-full p-2 md:p-10 transition-opacity duration-300">
+                <img 
+                  key={lightboxIndex} // Force re-render for animation
+                  src={lightboxImages[lightboxIndex]} 
+                  className="max-w-full max-h-[85vh] object-contain shadow-2xl animate-fade-in" 
+                  alt="Full size"
+                />
+                {/* Counter */}
+                {lightboxImages.length > 1 && (
+                  <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full pt-4 text-white/50 text-sm font-mono tracking-widest">
+                     {lightboxIndex + 1} / {lightboxImages.length}
+                  </div>
+                )}
+             </div>
+
+             {/* Navigation - Next */}
+             {lightboxImages.length > 1 && (
+               <button 
+                 onClick={nextImage}
+                 className="absolute right-2 md:right-8 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-10"
+               >
+                 <ChevronRight size={40} />
+               </button>
+             )}
+           </div>
+        </div>
+      )}
+
+      <AIAssistant />
+      {/* Hide footer on maintenance or detail pages for cleaner look */}
+      {!['maintenance', 'snake-detail', 'article-detail', 'admin'].includes(currentPage) && <Footer />}
+    </div>
+  );
+};
+
+export default App;
