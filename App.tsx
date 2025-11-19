@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import SnakeCard from './components/SnakeCard';
-import AIAssistant from './components/AIAssistant';
 import { FEATURED_SNAKES, ARTICLES } from './constants';
 import { Snake, Article, Gender, Availability } from './types';
 import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, X, ZoomIn, ChevronLeft, Plus, Trash2, Upload, Save, Camera } from 'lucide-react';
