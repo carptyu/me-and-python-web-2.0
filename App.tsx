@@ -866,7 +866,6 @@ const App: React.FC = () => {
         </div>
       )}
 
-      <AIAssistant />
       {/* Hide footer on maintenance or detail pages for cleaner look */}
       {!['maintenance', 'snake-detail', 'article-detail', 'admin'].includes(currentPage) && <Footer />}
     </div>
