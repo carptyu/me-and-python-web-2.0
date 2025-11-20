@@ -30,6 +30,31 @@ const mapContentfulSnakeToAppSnake = (item: any): Snake => {
     }
   }
 
+  // Ensure genetics is always an array
+  let genetics: string[] = [];
+  if (Array.isArray(fields.genetics)) {
+    genetics = fields.genetics;
+  } else if (typeof fields.genetics === 'string') {
+    genetics = [fields.genetics];
+  }
+
+  // Ensure images is always an array
+  let images: string[] = [imageUrl];
+  if (Array.isArray(fields.images)) {
+    images = fields.images.map((img: any) => {
+      let url = img?.fields?.file?.url;
+      if (url && !url.startsWith('http')) {
+        return `https:${url}`;
+      }
+      return url;
+    }).filter(Boolean);
+  }
+
+  // If no gallery images, use main image
+  if (images.length === 0) {
+    images = [imageUrl];
+  }
+
   return {
     id: sys.id,
     morph: fields.morph || 'Unknown Morph',
@@ -38,12 +63,12 @@ const mapContentfulSnakeToAppSnake = (item: any): Snake => {
     gender: fields.gender === 'Male' ? Gender.Male : Gender.Female,
     weight: fields.weight || 0,
     hatchDate: fields.hatchDate || new Date().toISOString().split('T')[0],
-    genetics: fields.genetics || [],
+    genetics: genetics,
     diet: fields.diet || 'Unknown',
     availability: (fields.availability as Availability) || Availability.Available,
     description: fields.description || '',
     imageUrl: imageUrl,
-    images: [imageUrl] // Contentful example usually has one main image, can extend to gallery if needed
+    images: images
   };
 };
 
