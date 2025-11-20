@@ -3,9 +3,9 @@ import Navbar from './components/Navbar';
 import SnakeCard from './components/SnakeCard';
 
 import { FEATURED_SNAKES, ARTICLES } from './constants';
-import { Snake, Article, Gender, Availability } from './types';
-import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, X, ZoomIn, ChevronLeft, Plus, Trash2, Upload, Save, Camera, Loader2 } from 'lucide-react';
-import { fetchSnakesFromContentful, addSnakeToContentful, deleteSnakeFromContentful } from './services/contentfulService';
+import { Snake, Article } from './types';
+import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, X, ZoomIn, ChevronLeft, ExternalLink, Loader2 } from 'lucide-react';
+import { fetchSnakesFromContentful } from './services/contentfulService';
 
 const App: React.FC = () => {
     // Navigation State
@@ -138,26 +138,7 @@ const App: React.FC = () => {
 
 
     // --- Admin Actions ---
-    const handleDeleteSnake = (id: string) => {
-        if (confirm('確定要刪除此商品嗎？(這將會從 Contentful 永久刪除)')) {
-            setIsLoadingSnakes(true);
-            deleteSnakeFromContentful(id)
-                .then(() => {
-                    alert('刪除成功！');
-                    // Reload data
-                    return fetchSnakesFromContentful();
-                })
-                .then(cmsSnakes => {
-                    setSnakes(cmsSnakes);
-                    setIsLoadingSnakes(false);
-                })
-                .catch(err => {
-                    console.error(err);
-                    alert('刪除失敗，請檢查 Console');
-                    setIsLoadingSnakes(false);
-                });
-        }
-    };
+
 
     const handleConstruction = () => navigateTo('maintenance');
     const handleViewDetails = (snake: Snake) => navigateTo('snake-detail', { snake });
@@ -165,145 +146,38 @@ const App: React.FC = () => {
 
     // --- Sub-Components ---
 
-    // Admin Dashboard Component (The "CMS" Simulation)
+    // Admin Dashboard Component (Read-Only)
     const AdminDashboard = () => {
-        const [isAdding, setIsAdding] = useState(false);
-        const [formData, setFormData] = useState<Partial<Snake>>({
-            morph: '',
-            price: 0,
-            weight: 100,
-            gender: Gender.Male,
-            description: '',
-            imageUrl: ''
-        });
-        const [imageFile, setImageFile] = useState<File | null>(null);
-        const fileInputRef = useRef<HTMLInputElement>(null);
-
-        const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (e.target.files && e.target.files[0]) {
-                const file = e.target.files[0];
-                setImageFile(file);
-                const url = URL.createObjectURL(file);
-                setFormData(prev => ({ ...prev, imageUrl: url }));
-            }
-        };
-
-        const handleSubmit = async (e: React.FormEvent) => {
-            e.preventDefault();
-            if (!formData.morph || !formData.price) {
-                alert('請填寫必要欄位');
-                return;
-            }
-
-            setIsLoadingSnakes(true);
-            try {
-                await addSnakeToContentful(formData, imageFile);
-                alert('上架成功！');
-                setIsAdding(false);
-                setFormData({ morph: '', price: 0, weight: 100, gender: Gender.Male, description: '', imageUrl: '' });
-                setImageFile(null);
-                // Refresh data
-                const cmsSnakes = await fetchSnakesFromContentful();
-                setSnakes(cmsSnakes);
-            } catch (error) {
-                console.error(error);
-                alert('上架失敗，請檢查 Console');
-            } finally {
-                setIsLoadingSnakes(false);
-            }
-        };
-
         return (
             <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
                 <div className="flex justify-between items-center mb-8">
                     <h1 className="text-3xl font-bold text-concrete-900">後台管理系統</h1>
-                    {!isAdding && (
-                        <button
-                            onClick={() => setIsAdding(true)}
-                            className="bg-urban-green text-white px-4 py-2 rounded-lg flex items-center gap-2 hover:bg-urban-lightGreen transition shadow-lg"
-                        >
-                            <Plus size={18} /> 新增商品 (Contentful)
-                        </button>
-                    )}
                 </div>
 
-                {isAdding ? (
-                    <div className="bg-white rounded-2xl p-6 md:p-8 shadow-xl border border-concrete-200 animate-slide-up">
-                        <div className="flex justify-between items-center mb-6 border-b border-concrete-100 pb-4">
-                            <h2 className="text-xl font-bold text-concrete-900 flex items-center gap-2">
-                                <Upload size={20} className="text-urban-green" /> Contentful 上架模式
-                            </h2>
-                            <button onClick={() => setIsAdding(false)} className="text-concrete-400 hover:text-concrete-900"><X size={24} /></button>
+                <div className="bg-white rounded-2xl p-8 shadow-xl border border-concrete-200 text-center">
+                    <div className="flex justify-center mb-6">
+                        <div className="bg-urban-green/10 p-4 rounded-full">
+                            <ExternalLink size={48} className="text-urban-green" />
                         </div>
-
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            {/* Image Upload Area */}
-                            <div
-                                className="w-full aspect-video bg-concrete-50 border-2 border-dashed border-concrete-300 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:border-urban-green hover:bg-urban-green/5 transition-all relative overflow-hidden group"
-                                onClick={() => fileInputRef.current?.click()}
-                            >
-                                {formData.imageUrl ? (
-                                    <img src={formData.imageUrl} alt="Preview" className="w-full h-full object-contain" />
-                                ) : (
-                                    <div className="text-center text-concrete-400 group-hover:text-urban-green transition-colors">
-                                        <Camera size={48} className="mx-auto mb-2" />
-                                        <p className="font-medium">點擊上傳照片 / 拍攝</p>
-                                        <p className="text-xs mt-1 opacity-70">支援 JPG, PNG (模擬)</p>
-                                    </div>
-                                )}
-                                <input
-                                    type="file"
-                                    ref={fileInputRef}
-                                    className="hidden"
-                                    accept="image/*"
-                                    onChange={handleFileChange}
-                                />
-                            </div>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-xs font-bold text-concrete-500 uppercase tracking-wider mb-2">品系名稱 (Morph)</label>
-                                    <input
-                                        required
-                                        type="text"
-                                        value={formData.morph}
-                                        onChange={e => setFormData({ ...formData, morph: e.target.value })}
-                                        placeholder="例如: Banana Pied"
-                                        className="w-full bg-concrete-50 border border-concrete-200 rounded-lg p-3 text-concrete-900 focus:ring-2 focus:ring-urban-green/20 focus:border-urban-green outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <label className="block text-xs font-bold text-concrete-500 uppercase tracking-wider mb-2">價格 (NTD)</label>
-                                    <input
-                                        required
-                                        type="number"
-                                        value={formData.price || ''}
-                                        onChange={e => setFormData({ ...formData, price: Number(e.target.value) })}
-                                        placeholder="35000"
-                                        className="w-full bg-concrete-50 border border-concrete-200 rounded-lg p-3 text-concrete-900 focus:ring-2 focus:ring-urban-green/20 focus:border-urban-green outline-none"
-                                    />
-                                </div>
-                            </div>
-
-                            <div className="flex gap-4 pt-4">
-                                <button
-                                    type="button"
-                                    onClick={() => setIsAdding(false)}
-                                    className="flex-1 py-3 rounded-lg border border-concrete-200 text-concrete-600 font-bold hover:bg-concrete-50 transition-colors"
-                                >
-                                    取消
-                                </button>
-                                <button
-                                    type="submit"
-                                    className="flex-1 py-3 rounded-lg bg-concrete-900 text-white font-bold hover:bg-black transition-colors flex justify-center items-center gap-2"
-                                >
-                                    <Save size={18} /> 發布至 Contentful
-                                </button>
-                            </div>
-                        </form>
                     </div>
-                ) : (
-                    <div className="bg-white rounded-2xl shadow-sm border border-concrete-200 overflow-hidden">
+                    <h2 className="text-2xl font-bold text-concrete-900 mb-4">
+                        請前往 Contentful 官方網站進行管理
+                    </h2>
+                    <p className="text-concrete-500 mb-8 max-w-lg mx-auto">
+                        為了確保資料的安全性與完整性，目前我們已將所有新增、編輯與刪除功能移至 Contentful 官方後台。
+                    </p>
+
+                    <a
+                        href="https://app.contentful.com"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-2 bg-concrete-900 text-white px-8 py-4 rounded-lg font-bold hover:bg-black transition-all shadow-lg hover:shadow-xl"
+                    >
+                        前往 Contentful 登入 <ExternalLink size={18} />
+                    </a>
+
+                    <div className="mt-12 border-t border-concrete-100 pt-8">
+                        <h3 className="text-lg font-bold text-concrete-900 mb-4">目前已上架商品預覽</h3>
                         <div className="overflow-x-auto">
                             <table className="w-full text-left">
                                 <thead className="bg-concrete-50 text-xs uppercase text-concrete-500 font-bold">
@@ -312,7 +186,6 @@ const App: React.FC = () => {
                                         <th className="p-4">ID / 品系</th>
                                         <th className="p-4">價格</th>
                                         <th className="p-4">狀態</th>
-                                        <th className="p-4 text-right">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-concrete-100">
@@ -336,21 +209,13 @@ const App: React.FC = () => {
                                                     {snake.availability}
                                                 </span>
                                             </td>
-                                            <td className="p-4 text-right">
-                                                <button
-                                                    onClick={() => handleDeleteSnake(snake.id)}
-                                                    className="text-red-400 hover:text-red-600 p-2 hover:bg-red-50 rounded-full transition-colors"
-                                                >
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </td>
                                         </tr>
                                     ))}
                                 </tbody>
                             </table>
                         </div>
                     </div>
-                )}
+                </div>
             </div>
         );
     };
@@ -669,8 +534,9 @@ const App: React.FC = () => {
         <div className="min-h-screen bg-concrete-50 text-concrete-900 font-sans selection:bg-urban-green/20">
             <Navbar
                 currentPage={currentPage}
-                onNavigate={navigateTo}
-                cartCount={0}
+                setPage={(page) => navigateTo(page)}
+                canGoBack={history.length > 1}
+                onGoBack={goBack}
             />
 
             {currentPage === 'home' && (
@@ -694,7 +560,7 @@ const App: React.FC = () => {
                             <div className="space-y-4">
                                 <div
                                     className="aspect-square bg-concrete-100 rounded-2xl overflow-hidden cursor-zoom-in relative group"
-                                    onClick={() => openLightbox(selectedSnake.images)}
+                                    onClick={() => openLightbox(selectedSnake.images || [])}
                                 >
                                     <img src={selectedSnake.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                                     <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
@@ -702,11 +568,11 @@ const App: React.FC = () => {
                                     </div>
                                 </div>
                                 <div className="grid grid-cols-4 gap-4">
-                                    {selectedSnake.images.map((img, i) => (
+                                    {(selectedSnake.images || []).map((img, i) => (
                                         <div
                                             key={i}
                                             className="aspect-square bg-concrete-100 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-urban-green transition-all"
-                                            onClick={() => openLightbox(selectedSnake.images, i)}
+                                            onClick={() => openLightbox(selectedSnake.images || [], i)}
                                         >
                                             <img src={img} className="w-full h-full object-cover" />
                                         </div>
