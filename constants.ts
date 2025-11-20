@@ -123,7 +123,9 @@ export const ARTICLES: Article[] = [
     author: 'Royal Morphs 團隊',
     date: '2023年10月12日',
     imageUrl: 'https://picsum.photos/seed/reptilecare/800/600',
-    tags: ['飼養指南', '新手入門', '環境設置']
+    tags: ['飼養指南', '新手入門', '環境設置'],
+    category: '飼養指南',
+    readTime: '5 min'
   },
   {
     id: 'ART-002',
@@ -133,7 +135,9 @@ export const ARTICLES: Article[] = [
     author: 'Dr. Herp',
     date: '2023年11月05日',
     imageUrl: 'https://picsum.photos/seed/genetics/800/600',
-    tags: ['基因學', '繁殖計畫']
+    tags: ['基因學', '繁殖計畫'],
+    category: '基因知識',
+    readTime: '8 min'
   },
   {
     id: 'ART-003',
@@ -143,6 +147,8 @@ export const ARTICLES: Article[] = [
     author: 'Royal Morphs 團隊',
     date: '2023年12月20日',
     imageUrl: 'https://picsum.photos/seed/feeding/800/600',
-    tags: ['餵食技巧', '健康管理']
+    tags: ['餵食技巧', '健康管理'],
+    category: '健康管理',
+    readTime: '6 min'
   }
 ];

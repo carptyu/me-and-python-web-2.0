@@ -34,6 +34,8 @@ export interface Article {
   date: string;
   imageUrl: string;
   tags: string[];
+  category: string;
+  readTime: string;
 }
 
 export interface ChatMessage {
