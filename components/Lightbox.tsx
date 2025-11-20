@@ -3,12 +3,15 @@ import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface LightboxProps {
     images: string[];
+    originalImages?: string[]; // Full resolution images for viewing
     initialIndex?: number;
     isOpen: boolean;
     onClose: () => void;
 }
 
-const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, isOpen, onClose }) => {
+const Lightbox: React.FC<LightboxProps> = ({ images, originalImages, initialIndex = 0, isOpen, onClose }) => {
+    // Use original high-res images if available, otherwise fall back to compressed images
+    const displayImages = originalImages && originalImages.length > 0 ? originalImages : images;
     const [currentIndex, setCurrentIndex] = useState(initialIndex);
     const [scale, setScale] = useState(1);
     const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -46,7 +49,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, isOpen, o
 
     const nextImage = (e?: React.MouseEvent) => {
         e?.stopPropagation();
-        if (currentIndex < images.length - 1) {
+        if (currentIndex < displayImages.length - 1) {
             setCurrentIndex(prev => prev + 1);
             resetZoom();
         } else {
@@ -63,7 +66,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, isOpen, o
             resetZoom();
         } else {
             // Optional: Loop to end
-            setCurrentIndex(images.length - 1);
+            setCurrentIndex(displayImages.length - 1);
             resetZoom();
         }
     };
@@ -155,7 +158,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, isOpen, o
             </button>
 
             {/* Navigation - Prev */}
-            {images.length > 1 && (
+            {displayImages.length > 1 && (
                 <button
                     onClick={prevImage}
                     className="absolute left-2 md:left-8 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-20"
@@ -165,7 +168,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, isOpen, o
             )}
 
             {/* Navigation - Next */}
-            {images.length > 1 && (
+            {displayImages.length > 1 && (
                 <button
                     onClick={nextImage}
                     className="absolute right-2 md:right-8 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-20"
@@ -181,7 +184,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, isOpen, o
             >
                 <img
                     ref={imageRef}
-                    src={images[currentIndex]}
+                    src={displayImages[currentIndex]}
                     alt={`Image ${currentIndex + 1}`}
                     className={`max-w-full max-h-[85vh] object-contain transition-transform duration-300 ${isDragging ? 'cursor-grabbing' : scale > 1 ? 'cursor-grab' : 'cursor-zoom-in'}`}
                     style={{
@@ -195,9 +198,9 @@ const Lightbox: React.FC<LightboxProps> = ({ images, initialIndex = 0, isOpen, o
 
             {/* Controls / Info */}
             <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 flex flex-col items-center gap-4 pointer-events-none">
-                {images.length > 1 && (
+                {displayImages.length > 1 && (
                     <div className="text-white/50 text-sm font-mono tracking-widest bg-black/50 px-4 py-1 rounded-full">
-                        {currentIndex + 1} / {images.length}
+                        {currentIndex + 1} / {displayImages.length}
                     </div>
                 )}
             </div>

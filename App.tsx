@@ -81,6 +81,7 @@ const App: React.FC = () => {
     // Lightbox State
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxImages, setLightboxImages] = useState<string[]>([]);
+    const [lightboxOriginalImages, setLightboxOriginalImages] = useState<string[]>([]);
     const [lightboxIndex, setLightboxIndex] = useState(0);
 
     // Scroll Restoration Cache
@@ -144,8 +145,9 @@ const App: React.FC = () => {
     };
 
     // --- Lightbox Logic ---
-    const openLightbox = (images: string[], index: number = 0) => {
+    const openLightbox = (images: string[], originalImages: string[] = [], index: number = 0) => {
         setLightboxImages(images);
+        setLightboxOriginalImages(originalImages);
         setLightboxIndex(index);
         setLightboxOpen(true);
     };
@@ -153,6 +155,7 @@ const App: React.FC = () => {
     const closeLightbox = () => {
         setLightboxOpen(false);
         setLightboxImages([]);
+        setLightboxOriginalImages([]);
     };
 
 
@@ -580,9 +583,9 @@ const App: React.FC = () => {
                                 <div className="space-y-4">
                                     <div
                                         className="aspect-square bg-concrete-100 rounded-2xl overflow-hidden cursor-zoom-in relative group"
-                                        onClick={() => openLightbox(selectedSnake.images || [])}
+                                        onClick={() => openLightbox(selectedSnake.images || [], selectedSnake.originalImages || [], 0)}
                                     >
-                                        <img src={selectedSnake.imageUrl} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                        <img src={selectedSnake.imageUrl} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
                                         <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
                                             <ZoomIn className="text-white drop-shadow-md" size={48} />
                                         </div>
@@ -592,9 +595,9 @@ const App: React.FC = () => {
                                             <div
                                                 key={i}
                                                 className="aspect-square bg-concrete-100 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-urban-green transition-all"
-                                                onClick={() => openLightbox(selectedSnake.images || [], i)}
+                                                onClick={() => openLightbox(selectedSnake.images || [], selectedSnake.originalImages || [], i)}
                                             >
-                                                <img src={img} className="w-full h-full object-cover" />
+                                                <img src={img} loading="lazy" className="w-full h-full object-cover" />
                                             </div>
                                         ))}
                                     </div>
@@ -670,6 +673,7 @@ const App: React.FC = () => {
                 {/* Lightbox Overlay */}
                 <Lightbox
                     images={lightboxImages}
+                    originalImages={lightboxOriginalImages}
                     initialIndex={lightboxIndex}
                     isOpen={lightboxOpen}
                     onClose={closeLightbox}

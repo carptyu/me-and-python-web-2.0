@@ -21,8 +21,10 @@ export interface Snake {
   diet: string; // e.g., "Frozen/Thawed Rat Pup"
   availability: Availability;
   description: string;
-  imageUrl: string; // Main thumbnail
-  images?: string[]; // Gallery images
+  imageUrl: string; // Main thumbnail (compressed)
+  images?: string[]; // Gallery images (compressed)
+  originalImageUrl?: string; // Original full-resolution main image
+  originalImages?: string[]; // Original full-resolution gallery images
 }
 
 export interface Article {

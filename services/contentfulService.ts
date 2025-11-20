@@ -16,6 +16,21 @@ if (spaceId && accessToken) {
   console.warn('Contentful credentials not found in environment variables');
 }
 
+// Image optimization helpers
+const getOptimizedImageUrl = (url: string): string => {
+  if (!url) return url;
+  // Add Contentful Image API parameters for compression
+  // w=800: max width 800px
+  // q=70: quality 70%
+  // fm=webp: format WebP (smaller file size)
+  return `${url}?w=800&q=70&fm=webp`;
+};
+
+const getOriginalImageUrl = (url: string): string => {
+  // Return original URL without any parameters
+  return url;
+};
+
 // Map Contentful entry to Snake type
 const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
   const fields = entry.fields;
@@ -97,20 +112,26 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
     return imgs.length > 0 ? imgs : getImages(fields.image);
   };
 
+  // Get original image URLs (without compression parameters)
+  const originalMainImage = getImageUrl();
+  const originalGalleryImages = getImagesArray();
+
   return {
     id: entry.sys.id,
     morph: fields.morph || 'Unknown',
     scientificName: fields.scientificName || 'Python regius',
     genetics: ensureArray(fields.genetics),
     price: Number(fields.price) || 0,
-    imageUrl: getImageUrl(),
+    imageUrl: getOptimizedImageUrl(originalMainImage),
     description: extractPlainText(fields.description) || '',
     hatchDate: fields.hatchDate || 'Unknown',
     weight: Number(fields.weight) || 0,
     gender: (fields.gender as Gender) || Gender.Male,
     diet: fields.diet || 'Unknown',
     availability: (fields.availability as Availability) || Availability.Available,
-    images: getImagesArray(),
+    images: originalGalleryImages.map(getOptimizedImageUrl),
+    originalImageUrl: getOriginalImageUrl(originalMainImage),
+    originalImages: originalGalleryImages.map(getOriginalImageUrl),
   };
 };
 
