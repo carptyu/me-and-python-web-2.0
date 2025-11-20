@@ -4,8 +4,9 @@ import SnakeCard from './components/SnakeCard';
 
 import { FEATURED_SNAKES, ARTICLES } from './constants';
 import { Snake, Article } from './types';
-import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, X, ZoomIn, ChevronLeft, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, ZoomIn, ExternalLink, Loader2 } from 'lucide-react';
 import { fetchSnakesFromContentful } from './services/contentfulService';
+import Lightbox from './components/Lightbox';
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
     constructor(props: { children: React.ReactNode }) {
@@ -153,27 +154,6 @@ const App: React.FC = () => {
         setLightboxOpen(false);
         setLightboxImages([]);
     };
-
-    const nextImage = (e?: React.MouseEvent) => {
-        e?.stopPropagation();
-        setLightboxIndex((prev) => (prev + 1) % lightboxImages.length);
-    };
-
-    const prevImage = (e?: React.MouseEvent) => {
-        e?.stopPropagation();
-        setLightboxIndex((prev) => (prev - 1 + lightboxImages.length) % lightboxImages.length);
-    };
-
-    useEffect(() => {
-        const handleKeyDown = (e: KeyboardEvent) => {
-            if (!lightboxOpen) return;
-            if (e.key === 'Escape') closeLightbox();
-            if (e.key === 'ArrowRight') nextImage();
-            if (e.key === 'ArrowLeft') prevImage();
-        };
-        window.addEventListener('keydown', handleKeyDown);
-        return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [lightboxOpen, lightboxImages]);
 
 
     // --- Admin Actions ---
@@ -688,62 +668,12 @@ const App: React.FC = () => {
                 {currentPage === 'admin' && <AdminDashboard />}
 
                 {/* Lightbox Overlay */}
-                {lightboxOpen && (
-                    <div
-                        className="fixed inset-0 z-50 bg-black/95 backdrop-blur-sm flex items-center justify-center animate-fade-in"
-                        onClick={closeLightbox}
-                    >
-                        {/* Close Button */}
-                        <button
-                            className="absolute top-6 right-6 text-white/50 hover:text-white transition-colors bg-white/10 rounded-full p-2 z-20"
-                            onClick={closeLightbox}
-                        >
-                            <X size={32} />
-                        </button>
-
-                        {/* Main Image Container */}
-                        <div
-                            className="relative w-full h-full flex items-center justify-center"
-                            onClick={(e) => e.stopPropagation()}
-                        >
-                            {/* Navigation - Prev */}
-                            {lightboxImages.length > 1 && (
-                                <button
-                                    onClick={prevImage}
-                                    className="absolute left-2 md:left-8 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-10"
-                                >
-                                    <ChevronLeft size={40} />
-                                </button>
-                            )}
-
-                            {/* Image */}
-                            <div className="relative max-w-full max-h-full p-2 md:p-10 transition-opacity duration-300">
-                                <img
-                                    key={lightboxIndex} // Force re-render for animation
-                                    src={lightboxImages[lightboxIndex]}
-                                    className="max-w-full max-h-[85vh] object-contain shadow-2xl animate-fade-in"
-                                    alt="Full size"
-                                />
-                                {/* Counter */}
-                                {lightboxImages.length > 1 && (
-                                    <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full pt-4 text-white/50 text-sm font-mono tracking-widest">
-                                        {lightboxIndex + 1} / {lightboxImages.length}
-                                    </div>
-                                )}
-                            </div>
-
-                            {/* Navigation - Next */}
-                            {lightboxImages.length > 1 && (
-                                <button
-                                    onClick={nextImage}
-                                    className="absolute right-2 md:right-8 text-white/50 hover:text-white transition-all p-4 hover:bg-white/10 rounded-full z-10"
-                                >
-                                    <ChevronRight size={40} />
-                                </button>
-                            )}
-                        </div>
-                    </div>
-                )}
+                <Lightbox
+                    images={lightboxImages}
+                    initialIndex={lightboxIndex}
+                    isOpen={lightboxOpen}
+                    onClose={closeLightbox}
+                />
 
                 {/* Hide footer on maintenance or detail pages for cleaner look */}
                 {!['maintenance', 'snake-detail', 'article-detail', 'admin'].includes(currentPage) && <Footer />}
