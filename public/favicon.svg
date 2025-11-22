@@ -1,0 +1,6 @@
+<svg width="64" height="64" viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- M Shape Snake Body -->
+  <path d="M12 52V20C12 16 16 12 20 12C24 12 28 16 28 20V40C28 44 32 48 36 48C40 48 44 44 44 40V20C44 16 48 12 52 12C56 12 60 16 60 20V36" stroke="#52525b" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  <!-- Snake Head -->
+  <circle cx="12" cy="52" r="4" fill="#52525b"/>
+</svg>
