@@ -7,6 +7,7 @@ import { Snake, Article } from './types';
 import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, ZoomIn, ExternalLink, Loader2 } from 'lucide-react';
 import { fetchSnakesFromContentful } from './services/contentfulService';
 import { SpeedInsights } from "@vercel/speed-insights/react"
+import { Analytics } from "@vercel/analytics/react"
 import Lightbox from './components/Lightbox';
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
@@ -684,6 +685,7 @@ const App: React.FC = () => {
                 {!['maintenance', 'snake-detail', 'article-detail', 'admin'].includes(currentPage) && <Footer />}
             </div>
             <SpeedInsights />
+            <Analytics />
         </ErrorBoundary>
     );
 };
