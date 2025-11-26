@@ -49,8 +49,8 @@ const Navbar: React.FC = () => {
         <>
             <nav
                 className={`fixed top-0 w-full z-40 transition-all duration-300 border-b ${scrolled
-                        ? 'bg-white/80 backdrop-blur-md border-concrete-200 shadow-sm'
-                        : 'bg-white/0 border-transparent'
+                    ? 'bg-white/80 backdrop-blur-md border-concrete-200 shadow-sm'
+                    : 'bg-white/0 border-transparent'
                     }`}
             >
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -90,8 +90,8 @@ const Navbar: React.FC = () => {
                                     key={link.name}
                                     to={link.path}
                                     className={`text-sm font-medium transition-colors duration-300 ${isCurrentPage(link.path)
-                                            ? 'text-urban-green'
-                                            : 'text-concrete-500 hover:text-concrete-900'
+                                        ? 'text-urban-green'
+                                        : 'text-concrete-500 hover:text-concrete-900'
                                         }`}
                                 >
                                     {link.name}

@@ -1,85 +1,94 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>迷蟒 Me&Python | 城市中的靜謐陪伴</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
-    <script>
-      tailwind.config = {
-        theme: {
-          extend: {
-            fontFamily: {
-              sans: ['"Noto Sans TC"', '"Inter"', 'sans-serif'],
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>迷蟒 Me&Python | 城市中的靜謐陪伴</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&family=Inter:wght@300;400;500;600&display=swap"
+    rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans TC"', '"Inter"', 'sans-serif'],
+          },
+          colors: {
+            concrete: {
+              50: '#fafafa',
+              100: '#f4f4f5', // Main BG
+              200: '#e4e4e7', // Borders
+              300: '#d4d4d8',
+              400: '#a1a1aa', // Subtext
+              800: '#27272a', // Dark Concrete
+              900: '#18181b', // Text
             },
-            colors: {
-              concrete: {
-                50: '#fafafa',
-                100: '#f4f4f5', // Main BG
-                200: '#e4e4e7', // Borders
-                300: '#d4d4d8',
-                400: '#a1a1aa', // Subtext
-                800: '#27272a', // Dark Concrete
-                900: '#18181b', // Text
-              },
-              urban: {
-                green: '#4a5d4e', // Moss Green
-                lightGreen: '#6b8270',
-                accent: '#d97706' // Subtle warm industrial accent
-              }
+            urban: {
+              green: '#4a5d4e', // Moss Green
+              lightGreen: '#6b8270',
+              accent: '#d97706' // Subtle warm industrial accent
+            }
+          },
+          animation: {
+            'fade-in': 'fadeIn 0.8s ease-out',
+            'slide-up': 'slideUp 0.8s ease-out forwards',
+            'slide-down': 'slideDown 0.3s ease-in forwards',
+          },
+          keyframes: {
+            fadeIn: {
+              '0%': { opacity: '0' },
+              '100%': { opacity: '1' },
             },
-            animation: {
-              'fade-in': 'fadeIn 0.8s ease-out',
-              'slide-up': 'slideUp 0.8s ease-out forwards',
+            slideUp: {
+              '0%': { opacity: '0', transform: 'translateY(20px)' },
+              '100%': { opacity: '1', transform: 'translateY(0)' },
             },
-            keyframes: {
-              fadeIn: {
-                '0%': { opacity: '0' },
-                '100%': { opacity: '1' },
-              },
-              slideUp: {
-                '0%': { opacity: '0', transform: 'translateY(20px)' },
-                '100%': { opacity: '1', transform: 'translateY(0)' },
-              }
+            slideDown: {
+              '0%': { opacity: '1', transform: 'translateY(0)' },
+              '100%': { opacity: '0', transform: 'translateY(100%)' },
             }
           }
         }
       }
-    </script>
-    <style>
-      body {
-        background-color: #f4f4f5;
-        color: #18181b;
-        font-family: 'Noto Sans TC', sans-serif;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-      }
-      
-      .no-scrollbar::-webkit-scrollbar {
-        display: none;
-      }
-      .no-scrollbar {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
+    }
+  </script>
+  <style>
+    body {
+      background-color: #f4f4f5;
+      color: #18181b;
+      font-family: 'Noto Sans TC', sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
 
-      .glass {
-        background: rgba(255, 255, 255, 0.7);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(0,0,0,0.05);
-      }
-      
-      .glass-dark {
-         background: rgba(39, 39, 42, 0.85);
-         backdrop-filter: blur(16px);
-      }
-    </style>
-<script type="importmap">
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .glass {
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    }
+
+    .glass-dark {
+      background: rgba(39, 39, 42, 0.85);
+      backdrop-filter: blur(16px);
+    }
+  </style>
+  <script type="importmap">
 {
   "imports": {
     "react": "https://aistudiocdn.com/react@^19.2.0",
@@ -92,10 +101,12 @@
   }
 }
 </script>
-<link rel="stylesheet" href="/index.css">
+  <link rel="stylesheet" href="/index.css">
 </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
-  </body>
+
+<body>
+  <div id="root"></div>
+  <script type="module" src="/index.tsx"></script>
+</body>
+
 </html>

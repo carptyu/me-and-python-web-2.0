@@ -84,6 +84,9 @@ const AppContent: React.FC = () => {
     const [lightboxOriginalImages, setLightboxOriginalImages] = useState<string[]>([]);
     const [lightboxIndex, setLightboxIndex] = useState(0);
 
+    // Inquiry Alert State
+    const [showInquiryAlert, setShowInquiryAlert] = useState(false);
+
     // --- Lightbox Logic ---
     const openLightbox = (images: string[], originalImages: string[] = [], index: number = 0) => {
         setLightboxImages(images);
@@ -328,9 +331,9 @@ const AppContent: React.FC = () => {
                             <select
                                 value={sortBy}
                                 onChange={(e) => setSortBy(e.target.value as any)}
-                                className="px-4 py-2 rounded-lg text-sm border border-concrete-200 bg-white text-concrete-900 focus:outline-none focus:ring-2 focus:ring-urban-green/20"
+                                className="px-4 py-2 rounded-lg text-sm border border-concrete-200 bg-white text-concrete-900 focus:outline-none focus:border-urban-green/50 transition-colors shadow-sm"
                             >
-                                <option value="default">店長推薦</option>
+                                <option value="default">預設排序</option>
                                 <option value="listingTime">最新上架</option>
                                 <option value="priceDesc">價格: 高 → 低</option>
                                 <option value="priceAsc">價格: 低 → 高</option>
@@ -466,7 +469,7 @@ const AppContent: React.FC = () => {
         };
 
         return (
-            <div className="bg-white min-h-screen pt-24 pb-20 px-4 animate-fade-in">
+            <div className="bg-white min-h-screen pt-24 pb-20 px-4">
                 <div className="max-w-7xl mx-auto">
                     <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
                         <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
@@ -539,20 +542,12 @@ const AppContent: React.FC = () => {
                                     <span className="text-concrete-900 font-mono">{snake.id}</span>
                                 </div>
                                 <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                    <span className="text-concrete-400">基因</span>
-                                    <span className="text-concrete-900 font-medium text-right">{snake.genetics.join(' + ') || '未標註'}</span>
-                                </div>
-                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                    <span className="text-concrete-400">孵化日期</span>
+                                    <span className="text-concrete-400">出生日期</span>
                                     <span className="text-concrete-900">{snake.hatchDate}</span>
                                 </div>
-                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                                <div className="flex justify-between text-sm pt-2">
                                     <span className="text-concrete-400">體重</span>
                                     <span className="text-concrete-900">{snake.weight}g</span>
-                                </div>
-                                <div className="flex justify-between text-sm pt-2">
-                                    <span className="text-concrete-400">目前食譜</span>
-                                    <span className="text-concrete-900">{snake.diet}</span>
                                 </div>
                             </div>
 
@@ -562,20 +557,20 @@ const AppContent: React.FC = () => {
                                         <MapPin size={14} />
                                         <span>提供全台安全寄送服務</span>
                                     </div>
-                                    <div className="flex gap-4">
-                                        <button
-                                            onClick={handleConstruction}
-                                            className="flex-1 bg-concrete-900 text-white font-bold py-4 rounded-lg hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl"
-                                        >
-                                            加入購物車 - NT$ {snake.price.toLocaleString()}
-                                        </button>
-                                        <button
-                                            onClick={handleConstruction}
-                                            className="px-6 border border-concrete-200 rounded-lg hover:bg-concrete-50 transition-colors"
-                                        >
-                                            詢問細節
-                                        </button>
-                                    </div>
+                                    <button
+                                        onClick={() => {
+                                            const genderText = snake.gender === 'Male' ? '公' : '母';
+                                            const inquiryText = `你好 我想詢問 ${genderText}${snake.morph} (${snake.id})`;
+                                            navigator.clipboard.writeText(inquiryText).then(() => {
+                                                setShowInquiryAlert(true);
+                                            }).catch(() => {
+                                                alert('複製失敗，請手動複製：\n' + inquiryText);
+                                            });
+                                        }}
+                                        className="w-full bg-concrete-900 text-white font-bold py-4 rounded-lg hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl"
+                                    >
+                                        立即詢問
+                                    </button>
                                 </div>
                             </div>
                         </div>
@@ -606,7 +601,7 @@ const AppContent: React.FC = () => {
         }
 
         return (
-            <div className="bg-white min-h-screen pt-24 pb-20 px-4 animate-fade-in">
+            <div className="bg-white min-h-screen pt-24 pb-20 px-4">
                 <div className="max-w-3xl mx-auto">
                     <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
                         <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
@@ -747,6 +742,30 @@ const AppContent: React.FC = () => {
                     initialIndex={lightboxIndex}
                     onClose={closeLightbox}
                 />
+            )}
+
+            {showInquiryAlert && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4" onClick={() => setShowInquiryAlert(false)}>
+                    <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
+                        <div className="flex justify-center mb-6">
+                            <div className="bg-green-100 p-4 rounded-full">
+                                <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                            </div>
+                        </div>
+                        <h3 className="text-2xl font-bold text-concrete-900 mb-4 text-center">已複製詢問訊息！</h3>
+                        <p className="text-concrete-600 text-center mb-6 leading-relaxed">
+                            請私訊我們的 <span className="font-bold text-urban-green">Instagram</span> 或 <span className="font-bold text-urban-green">Facebook 專頁</span>，我們會盡快回覆您！
+                        </p>
+                        <button
+                            onClick={() => setShowInquiryAlert(false)}
+                            className="w-full bg-concrete-900 text-white font-bold py-3 rounded-lg hover:bg-concrete-800 transition-colors"
+                        >
+                            知道了
+                        </button>
+                    </div>
+                </div>
             )}
         </div>
     );
