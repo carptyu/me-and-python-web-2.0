@@ -433,6 +433,7 @@ const AppContent: React.FC = () => {
 
         useEffect(() => {
             setActiveImageIndex(0);
+            window.scrollTo(0, 0);
         }, [id]);
 
         if (!snake) {
@@ -517,9 +518,9 @@ const AppContent: React.FC = () => {
                             </div>
                         </div>
                         <div>
-                            <div className="flex items-start gap-4 mb-6">
+                            <div className="flex items-center gap-4 mb-6">
                                 <h1 className="text-4xl font-bold text-concrete-900 flex-1 leading-tight">{snake.morph}</h1>
-                                <span className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mt-2 ${snake.availability === Availability.Available ? 'bg-green-100 text-green-700' :
+                                <span className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${snake.availability === Availability.Available ? 'bg-green-100 text-green-700' :
                                     snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700' :
                                         snake.availability === Availability.Sold ? 'bg-red-100 text-red-700' :
                                             'bg-blue-50 text-blue-600'
