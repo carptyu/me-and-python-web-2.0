@@ -4,8 +4,8 @@ import Navbar from './components/Navbar';
 import SnakeCard from './components/SnakeCard';
 
 import { FEATURED_SNAKES, ARTICLES } from './constants';
-import { Snake, Article } from './types';
-import { ArrowRight, ChevronRight, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, ZoomIn, ExternalLink, Loader2 } from 'lucide-react';
+import { Snake, Article, Availability } from './types';
+import { ArrowRight, ChevronRight, ChevronLeft, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, ZoomIn, ExternalLink, Loader2 } from 'lucide-react';
 import { fetchSnakesFromContentful } from './services/contentfulService';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react"
@@ -160,9 +160,15 @@ const AppContent: React.FC = () => {
                                                 ${snake.price.toLocaleString()}
                                             </td>
                                             <td className="p-4">
-                                                <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${snake.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                                                <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${snake.availability === Availability.Available ? 'bg-green-100 text-green-700' :
+                                                    snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700' :
+                                                        snake.availability === Availability.Sold ? 'bg-red-100 text-red-700' :
+                                                            'bg-blue-50 text-blue-600'
                                                     }`}>
-                                                    {snake.availability}
+                                                    {snake.availability === Availability.Available ? '現貨' :
+                                                        snake.availability === Availability.OnHold ? '保留中' :
+                                                            snake.availability === Availability.Sold ? '已售出' :
+                                                                '開放預購'}
                                                 </span>
                                             </td>
                                         </tr>
@@ -376,6 +382,11 @@ const AppContent: React.FC = () => {
     const SnakeDetailPage = () => {
         const { id } = useParams<{ id: string }>();
         const snake = snakes.find(s => s.id === id);
+        const [activeImageIndex, setActiveImageIndex] = useState(0);
+
+        useEffect(() => {
+            setActiveImageIndex(0);
+        }, [id]);
 
         if (!snake) {
             return (
@@ -393,6 +404,23 @@ const AppContent: React.FC = () => {
             );
         }
 
+        const images = snake.images || [];
+        const displayImage = images[activeImageIndex] || snake.imageUrl;
+
+        const handlePrevImage = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (images.length > 1) {
+                setActiveImageIndex((prev) => (prev - 1 + images.length) % images.length);
+            }
+        };
+
+        const handleNextImage = (e: React.MouseEvent) => {
+            e.stopPropagation();
+            if (images.length > 1) {
+                setActiveImageIndex((prev) => (prev + 1) % images.length);
+            }
+        };
+
         return (
             <div className="bg-white min-h-screen pt-24 pb-20 px-4 animate-fade-in">
                 <div className="max-w-7xl mx-auto">
@@ -403,19 +431,38 @@ const AppContent: React.FC = () => {
                         <div className="space-y-4">
                             <div
                                 className="aspect-square bg-concrete-100 rounded-2xl overflow-hidden cursor-zoom-in relative group"
-                                onClick={() => openLightbox(snake.images || [], snake.originalImages || [], 0)}
+                                onClick={() => openLightbox(snake.images || [], snake.originalImages || [], activeImageIndex)}
                             >
-                                <img src={snake.imageUrl} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                <img src={displayImage} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+
+                                {images.length > 1 && (
+                                    <>
+                                        <button
+                                            onClick={handlePrevImage}
+                                            className="absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-concrete-900 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg z-10"
+                                        >
+                                            <ChevronLeft size={24} />
+                                        </button>
+                                        <button
+                                            onClick={handleNextImage}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-concrete-900 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg z-10"
+                                        >
+                                            <ChevronRight size={24} />
+                                        </button>
+                                    </>
+                                )}
+
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100 pointer-events-none">
                                     <ZoomIn className="text-white drop-shadow-md" size={48} />
                                 </div>
                             </div>
                             <div className="grid grid-cols-4 gap-4">
-                                {(snake.images || []).map((img, i) => (
+                                {images.map((img, i) => (
                                     <div
                                         key={i}
-                                        className="aspect-square bg-concrete-100 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-urban-green transition-all"
-                                        onClick={() => openLightbox(snake.images || [], snake.originalImages || [], i)}
+                                        className={`aspect-square bg-concrete-100 rounded-lg overflow-hidden cursor-pointer border-2 transition-all ${activeImageIndex === i ? 'border-urban-green ring-2 ring-urban-green/20' : 'border-transparent hover:border-urban-green/50'}`}
+                                        onMouseEnter={() => setActiveImageIndex(i)}
+                                        onClick={() => setActiveImageIndex(i)}
                                     >
                                         <img src={img} loading="lazy" className="w-full h-full object-cover" />
                                     </div>
@@ -423,11 +470,17 @@ const AppContent: React.FC = () => {
                             </div>
                         </div>
                         <div>
-                            <div className="flex items-center gap-4 mb-6">
-                                <h1 className="text-4xl font-bold text-concrete-900">{snake.morph}</h1>
-                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${snake.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                            <div className="flex items-start gap-4 mb-6">
+                                <h1 className="text-4xl font-bold text-concrete-900 flex-1 leading-tight">{snake.morph}</h1>
+                                <span className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mt-2 ${snake.availability === Availability.Available ? 'bg-green-100 text-green-700' :
+                                    snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700' :
+                                        snake.availability === Availability.Sold ? 'bg-red-100 text-red-700' :
+                                            'bg-blue-50 text-blue-600'
                                     }`}>
-                                    {snake.availability}
+                                    {snake.availability === Availability.Available ? '現貨' :
+                                        snake.availability === Availability.OnHold ? '保留中' :
+                                            snake.availability === Availability.Sold ? '已售出' :
+                                                '開放預購'}
                                 </span>
                             </div>
                             <p className="text-3xl font-mono text-concrete-600 mb-8">${snake.price.toLocaleString()}</p>
@@ -628,41 +681,42 @@ const AppContent: React.FC = () => {
                     <>
                         <Hero />
                         <BentoGrid />
-                        <Footer />
                     </>
                 } />
-                <Route path="/shop" element={<><ShopPage /><Footer /></>} />
+                <Route path="/shop" element={<ShopPage />} />
+                <Route path="/blog" element={<BlogPage />} />
+                <Route path="/about" element={<AboutPage />} />
                 <Route path="/snake/:id" element={<SnakeDetailPage />} />
-                <Route path="/blog" element={<><BlogPage /><Footer /></>} />
                 <Route path="/blog/:slug" element={<ArticleDetailPage />} />
-                <Route path="/about" element={<><AboutPage /><Footer /></>} />
                 <Route path="/admin" element={<AdminDashboard />} />
                 <Route path="/maintenance" element={<MaintenanceView />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
 
-            {/* Lightbox Overlay */}
-            <Lightbox
-                images={lightboxImages}
-                originalImages={lightboxOriginalImages}
-                initialIndex={lightboxIndex}
-                isOpen={lightboxOpen}
-                onClose={closeLightbox}
-            />
+            <Footer />
 
-            <SpeedInsights />
-            <Analytics />
+            {lightboxOpen && (
+                <Lightbox
+                    isOpen={lightboxOpen}
+                    images={lightboxImages}
+                    originalImages={lightboxOriginalImages}
+                    initialIndex={lightboxIndex}
+                    onClose={closeLightbox}
+                />
+            )}
         </div>
     );
 };
 
-const App: React.FC = () => {
+const App = () => {
     return (
-        <ErrorBoundary>
-            <BrowserRouter>
+        <BrowserRouter>
+            <ErrorBoundary>
                 <AppContent />
-            </BrowserRouter>
-        </ErrorBoundary>
+            </ErrorBoundary>
+            <SpeedInsights />
+            <Analytics />
+        </BrowserRouter>
     );
 };
 

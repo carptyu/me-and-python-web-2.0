@@ -20,10 +20,10 @@ if (spaceId && accessToken) {
 const getOptimizedImageUrl = (url: string): string => {
   if (!url) return url;
   // Add Contentful Image API parameters for compression
-  // w=800: max width 800px
-  // q=70: quality 70%
+  // w=1200: max width 1200px (better for retina/desktop)
+  // q=80: quality 80% (better detail)
   // fm=webp: format WebP (smaller file size)
-  return `${url}?w=800&q=70&fm=webp`;
+  return `${url}?w=1200&q=80&fm=webp`;
 };
 
 const getOriginalImageUrl = (url: string): string => {
@@ -112,9 +112,25 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
     return imgs.length > 0 ? imgs : getImages(fields.image);
   };
 
+  // Map availability string to enum
+  const mapAvailability = (val: any): Availability => {
+    if (!val) return Availability.Available;
+    const strVal = String(val).toLowerCase().trim();
+
+    if (strVal === 'available') return Availability.Available;
+    if (strVal === 'on hold' || strVal === 'onhold') return Availability.OnHold;
+    if (strVal === 'sold') return Availability.Sold;
+    if (strVal === 'preorder' || strVal === 'pre-order') return Availability.PreOrder;
+
+    return Availability.Available;
+  };
+
   // Get original image URLs (without compression parameters)
   const originalMainImage = getImageUrl();
   const originalGalleryImages = getImagesArray();
+
+  // Ensure images array has at least the main image if empty
+  const finalImages = originalGalleryImages.length > 0 ? originalGalleryImages : (originalMainImage ? [originalMainImage] : []);
 
   return {
     id: entry.sys.id,
@@ -128,10 +144,10 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
     weight: Number(fields.weight) || 0,
     gender: (fields.gender as Gender) || Gender.Male,
     diet: fields.diet || 'Unknown',
-    availability: (fields.availability as Availability) || Availability.Available,
-    images: originalGalleryImages.map(getOptimizedImageUrl),
+    availability: mapAvailability(fields.availability),
+    images: finalImages.map(getOptimizedImageUrl),
     originalImageUrl: getOriginalImageUrl(originalMainImage),
-    originalImages: originalGalleryImages.map(getOriginalImageUrl),
+    originalImages: finalImages.map(getOriginalImageUrl),
   };
 };
 

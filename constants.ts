@@ -96,7 +96,7 @@ export const FEATURED_SNAKES: Snake[] = [
     hatchDate: '2023-11-01',
     genetics: ['Sunset'],
     diet: '活體跳跳鼠',
-    availability: Availability.Available,
+    availability: Availability.PreOrder,
     description: '橘色的聖杯。這種強烈的橘紅色澤不會褪色。對於高端育種計畫來說是必備的基因。',
     imageUrl: 'https://picsum.photos/seed/snake6/800/800',
     images: ['https://picsum.photos/seed/snake6/800/800']

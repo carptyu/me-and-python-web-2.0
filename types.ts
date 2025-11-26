@@ -6,7 +6,8 @@ export enum Gender {
 export enum Availability {
   Available = 'Available',
   OnHold = 'On Hold',
-  Sold = 'Sold'
+  Sold = 'Sold',
+  PreOrder = 'PreOrder'
 }
 
 export interface Snake {

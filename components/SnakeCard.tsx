@@ -15,11 +15,14 @@ const SnakeCard: React.FC<SnakeCardProps> = ({ snake, onViewDetails }) => {
       {/* Status Indicator */}
       <div className="absolute top-4 left-4 z-10">
         <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 ${snake.availability === Availability.Available ? 'bg-white/90 text-urban-green shadow-sm' :
-            snake.availability === Availability.OnHold ? 'bg-white/90 text-orange-500 shadow-sm' :
-              'bg-concrete-800/90 text-white shadow-sm'
+            snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700 shadow-sm' :
+              snake.availability === Availability.Sold ? 'bg-red-100 text-red-700 shadow-sm' :
+                'bg-blue-50 text-blue-600 shadow-sm' // PreOrder
           }`}>
-          {snake.availability === 'Available' ? '現貨' :
-            snake.availability === 'On Hold' ? '預訂中' : '已售出'}
+          {snake.availability === Availability.Available ? '現貨' :
+            snake.availability === Availability.OnHold ? '保留中' :
+              snake.availability === Availability.Sold ? '已售出' :
+                '開放預購'}
         </span>
       </div>
 
