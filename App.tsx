@@ -1,4 +1,5 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import SnakeCard from './components/SnakeCard';
 
@@ -49,10 +50,8 @@ class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { has
     }
 }
 
-const App: React.FC = () => {
-    // Navigation State
-    const [history, setHistory] = useState<string[]>(['home']);
-    const [currentPage, setCurrentPage] = useState('home');
+const AppContent: React.FC = () => {
+    const navigate = useNavigate();
 
     // Data State - Revised for Contentful
     const [snakes, setSnakes] = useState<Snake[]>([]);
@@ -77,74 +76,11 @@ const App: React.FC = () => {
         loadData();
     }, []);
 
-    const [selectedSnake, setSelectedSnake] = useState<Snake | null>(null);
-    const [selectedArticle, setSelectedArticle] = useState<Article | null>(null);
-
     // Lightbox State
     const [lightboxOpen, setLightboxOpen] = useState(false);
     const [lightboxImages, setLightboxImages] = useState<string[]>([]);
     const [lightboxOriginalImages, setLightboxOriginalImages] = useState<string[]>([]);
     const [lightboxIndex, setLightboxIndex] = useState(0);
-
-    // Scroll Restoration Cache
-    const scrollCache = useRef<{ [key: string]: number }>({});
-
-    // Enhanced Navigation Handler
-    const navigateTo = (page: string, data?: { snake?: Snake, article?: Article }) => {
-        if (page === currentPage) return;
-
-        scrollCache.current[currentPage] = window.scrollY;
-
-        if (['snake-detail', 'article-detail', 'admin'].includes(page)) {
-            scrollCache.current[page] = 0;
-        }
-
-        setHistory(prev => [...prev, page]);
-        setCurrentPage(page);
-
-        if (data?.snake) setSelectedSnake(data.snake);
-        if (data?.article) setSelectedArticle(data.article);
-
-        if (!['snake-detail', 'article-detail'].includes(page)) {
-            setSelectedSnake(null);
-            setSelectedArticle(null);
-        }
-
-        setTimeout(() => {
-            if (scrollCache.current[page] !== undefined) {
-                window.scrollTo({ top: scrollCache.current[page], behavior: 'auto' });
-            } else {
-                window.scrollTo({ top: 0, behavior: 'auto' });
-            }
-        }, 0);
-    };
-
-    const goBack = () => {
-        if (history.length > 1) {
-            scrollCache.current[currentPage] = window.scrollY;
-
-            const newHistory = [...history];
-            newHistory.pop();
-            const previousPage = newHistory[newHistory.length - 1];
-
-            setHistory(newHistory);
-            setCurrentPage(previousPage);
-
-            if (currentPage === 'snake-detail') setSelectedSnake(null);
-            if (currentPage === 'article-detail') setSelectedArticle(null);
-
-            setTimeout(() => {
-                const savedScrollY = scrollCache.current[previousPage];
-                if (savedScrollY !== undefined) {
-                    window.scrollTo({ top: savedScrollY, behavior: 'auto' });
-                } else {
-                    window.scrollTo(0, 0);
-                }
-            }, 0);
-        } else {
-            setCurrentPage('home');
-        }
-    };
 
     // --- Lightbox Logic ---
     const openLightbox = (images: string[], originalImages: string[] = [], index: number = 0) => {
@@ -160,13 +96,9 @@ const App: React.FC = () => {
         setLightboxOriginalImages([]);
     };
 
-
-    // --- Admin Actions ---
-
-
-    const handleConstruction = () => navigateTo('maintenance');
-    const handleViewDetails = (snake: Snake) => navigateTo('snake-detail', { snake });
-    const handleViewArticle = (article: Article) => navigateTo('article-detail', { article });
+    const handleConstruction = () => navigate('/maintenance');
+    const handleViewDetails = (snake: Snake) => navigate(`/snake/${snake.id}`);
+    const handleViewArticle = (article: Article) => navigate(`/blog/${article.slug}`);
 
     // --- Sub-Components ---
 
@@ -266,14 +198,14 @@ const App: React.FC = () => {
                 </p>
                 <div className="space-y-3">
                     <button
-                        onClick={goBack}
+                        onClick={() => navigate(-1)}
                         className="w-full bg-concrete-900 text-white font-bold py-3 flex items-center justify-center gap-2 hover:bg-concrete-800 transition-colors"
                     >
                         <ArrowLeft size={16} />
-                        撤退 (返回上一頁)
+                        返回上一頁
                     </button>
                     <button
-                        onClick={() => navigateTo('home')}
+                        onClick={() => navigate('/')}
                         className="w-full bg-white text-concrete-900 border-2 border-concrete-200 font-bold py-3 hover:bg-concrete-50 transition-colors"
                     >
                         回到首頁大廳
@@ -296,13 +228,13 @@ const App: React.FC = () => {
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-6 sm:px-0">
                     <button
-                        onClick={() => navigateTo('shop')}
+                        onClick={() => navigate('/shop')}
                         className="bg-concrete-900 text-white rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl w-full sm:w-auto"
                     >
                         探索現貨
                     </button>
                     <button
-                        onClick={() => navigateTo('about')}
+                        onClick={() => navigate('/about')}
                         className="bg-white text-concrete-900 border border-concrete-200 rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-50 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
                     >
                         了解更多 <ChevronRight size={14} />
@@ -346,7 +278,7 @@ const App: React.FC = () => {
                             <p className="text-concrete-500 mt-1 text-sm">加入 50k+ 都市飼養者行列。</p>
                         </div>
                     </div>
-                    <div className="lg:col-span-2 bg-urban-green/10 border border-urban-green/20 rounded-2xl overflow-hidden relative flex items-center justify-between p-8 md:p-10 group cursor-pointer hover:bg-urban-green/15 transition-colors" onClick={() => navigateTo('shop')}>
+                    <div className="lg:col-span-2 bg-urban-green/10 border border-urban-green/20 rounded-2xl overflow-hidden relative flex items-center justify-between p-8 md:p-10 group cursor-pointer hover:bg-urban-green/15 transition-colors" onClick={() => navigate('/shop')}>
                         <div className="z-10 max-w-md">
                             <h4 className="text-2xl md:text-3xl font-bold text-urban-green mb-2">本週新進</h4>
                             <p className="text-concrete-600">探索最新孵化的球蟒，尋找您的夢幻品系。</p>
@@ -441,28 +373,161 @@ const App: React.FC = () => {
         </div>
     );
 
-    const ArticleDetail = () => {
-        if (!selectedArticle) return null;
+    const SnakeDetailPage = () => {
+        const { id } = useParams<{ id: string }>();
+        const snake = snakes.find(s => s.id === id);
+
+        if (!snake) {
+            return (
+                <div className="min-h-screen flex items-center justify-center bg-concrete-50">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-concrete-900 mb-4">找不到此商品</h1>
+                        <button
+                            onClick={() => navigate('/shop')}
+                            className="bg-concrete-900 text-white px-6 py-3 rounded-lg hover:bg-concrete-800 transition-colors"
+                        >
+                            返回商店
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        return (
+            <div className="bg-white min-h-screen pt-24 pb-20 px-4 animate-fade-in">
+                <div className="max-w-7xl mx-auto">
+                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
+                        <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
+                    </button>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                        <div className="space-y-4">
+                            <div
+                                className="aspect-square bg-concrete-100 rounded-2xl overflow-hidden cursor-zoom-in relative group"
+                                onClick={() => openLightbox(snake.images || [], snake.originalImages || [], 0)}
+                            >
+                                <img src={snake.imageUrl} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                    <ZoomIn className="text-white drop-shadow-md" size={48} />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-4 gap-4">
+                                {(snake.images || []).map((img, i) => (
+                                    <div
+                                        key={i}
+                                        className="aspect-square bg-concrete-100 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-urban-green transition-all"
+                                        onClick={() => openLightbox(snake.images || [], snake.originalImages || [], i)}
+                                    >
+                                        <img src={img} loading="lazy" className="w-full h-full object-cover" />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                        <div>
+                            <div className="flex items-center gap-4 mb-6">
+                                <h1 className="text-4xl font-bold text-concrete-900">{snake.morph}</h1>
+                                <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${snake.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                                    }`}>
+                                    {snake.availability}
+                                </span>
+                            </div>
+                            <p className="text-3xl font-mono text-concrete-600 mb-8">${snake.price.toLocaleString()}</p>
+                            <p className="text-concrete-500 leading-relaxed mb-8 text-lg">
+                                {snake.description}
+                            </p>
+
+                            <div className="py-6 border-b border-concrete-100 space-y-4 bg-concrete-50/50 rounded-xl px-6 mt-6">
+                                <h4 className="text-concrete-900 font-bold text-sm uppercase tracking-wide mb-4">詳細數據</h4>
+                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                                    <span className="text-concrete-400">編號</span>
+                                    <span className="text-concrete-900 font-mono">{snake.id}</span>
+                                </div>
+                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                                    <span className="text-concrete-400">基因</span>
+                                    <span className="text-concrete-900 font-medium text-right">{snake.genetics.join(' + ') || '未標註'}</span>
+                                </div>
+                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                                    <span className="text-concrete-400">孵化日期</span>
+                                    <span className="text-concrete-900">{snake.hatchDate}</span>
+                                </div>
+                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
+                                    <span className="text-concrete-400">體重</span>
+                                    <span className="text-concrete-900">{snake.weight}g</span>
+                                </div>
+                                <div className="flex justify-between text-sm pt-2">
+                                    <span className="text-concrete-400">目前食譜</span>
+                                    <span className="text-concrete-900">{snake.diet}</span>
+                                </div>
+                            </div>
+
+                            <div className="mt-10 flex gap-4">
+                                <div className="bg-concrete-50 border border-concrete-200 rounded-xl p-6 text-center w-full">
+                                    <div className="flex items-center justify-center gap-2 text-concrete-500 text-xs mb-4">
+                                        <MapPin size={14} />
+                                        <span>提供全台安全寄送服務</span>
+                                    </div>
+                                    <div className="flex gap-4">
+                                        <button
+                                            onClick={handleConstruction}
+                                            className="flex-1 bg-concrete-900 text-white font-bold py-4 rounded-lg hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl"
+                                        >
+                                            加入購物車 - NT$ {snake.price.toLocaleString()}
+                                        </button>
+                                        <button
+                                            onClick={handleConstruction}
+                                            className="px-6 border border-concrete-200 rounded-lg hover:bg-concrete-50 transition-colors"
+                                        >
+                                            詢問細節
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
+    const ArticleDetailPage = () => {
+        const { slug } = useParams<{ slug: string }>();
+        const article = ARTICLES.find(a => a.slug === slug);
+
+        if (!article) {
+            return (
+                <div className="min-h-screen flex items-center justify-center bg-concrete-50">
+                    <div className="text-center">
+                        <h1 className="text-2xl font-bold text-concrete-900 mb-4">找不到此文章</h1>
+                        <button
+                            onClick={() => navigate('/blog')}
+                            className="bg-concrete-900 text-white px-6 py-3 rounded-lg hover:bg-concrete-800 transition-colors"
+                        >
+                            返回部落格
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
         return (
             <div className="bg-white min-h-screen pt-24 pb-20 px-4 animate-fade-in">
                 <div className="max-w-3xl mx-auto">
-                    <button onClick={goBack} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
+                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
                         <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
                     </button>
-                    <h1 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-6 leading-tight">{selectedArticle.title}</h1>
+                    <h1 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-6 leading-tight">{article.title}</h1>
                     <div className="flex items-center gap-4 border-b border-concrete-200 pb-8 mb-10">
                         <div className="w-10 h-10 rounded-full bg-concrete-100 overflow-hidden">
                             <img src="https://picsum.photos/seed/author/100/100" alt="Author" />
                         </div>
                         <div>
                             <p className="text-sm font-bold text-concrete-900">Me&Python Team</p>
-                            <p className="text-xs text-concrete-500">{selectedArticle.date} • {selectedArticle.readTime}</p>
+                            <p className="text-xs text-concrete-500">{article.date} • {article.readTime}</p>
                         </div>
                     </div>
                     <div className="prose prose-lg prose-concrete max-w-none">
-                        <img src={selectedArticle.imageUrl} alt={selectedArticle.title} className="w-full rounded-2xl mb-10" />
-                        <p className="lead text-xl text-concrete-600 mb-8">{selectedArticle.excerpt}</p>
-                        <div dangerouslySetInnerHTML={{ __html: selectedArticle.content }} />
+                        <img src={article.imageUrl} alt={article.title} className="w-full rounded-2xl mb-10" />
+                        <p className="lead text-xl text-concrete-600 mb-8">{article.excerpt}</p>
+                        <div dangerouslySetInnerHTML={{ __html: article.content }} />
                     </div>
                 </div>
             </div>
@@ -511,7 +576,7 @@ const App: React.FC = () => {
                     <div>
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">線上商店</h4>
                         <ul className="space-y-3 text-concrete-500">
-                            <li><button onClick={() => navigateTo('shop')} className="hover:text-concrete-900 transition-colors">全部商品</button></li>
+                            <li><button onClick={() => navigate('/shop')} className="hover:text-concrete-900 transition-colors">全部商品</button></li>
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">公蛇 (Males)</button></li>
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">母蛇 (Females)</button></li>
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">周邊商品</button></li>
@@ -523,13 +588,13 @@ const App: React.FC = () => {
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">飼養指南</button></li>
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">運送政策</button></li>
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">活體抵達保證</button></li>
-                            <li><button onClick={() => navigateTo('admin')} className="hover:text-urban-green transition-colors">管理員登入 (模擬)</button></li>
+                            <li><button onClick={() => navigate('/admin')} className="hover:text-urban-green transition-colors">管理員登入 (模擬)</button></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">品牌價值</h4>
                         <ul className="space-y-3 text-concrete-500">
-                            <li><button onClick={() => navigateTo('about')} className="hover:text-concrete-900 transition-colors">品牌理念</button></li>
+                            <li><button onClick={() => navigate('/about')} className="hover:text-concrete-900 transition-colors">品牌理念</button></li>
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">永續發展</button></li>
                             <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">隱私權條款</button></li>
                         </ul>
@@ -555,137 +620,48 @@ const App: React.FC = () => {
     );
 
     return (
-        <ErrorBoundary>
-            <div className="min-h-screen bg-concrete-50 text-concrete-900 font-sans selection:bg-urban-green/20">
-                <Navbar
-                    currentPage={currentPage}
-                    setPage={(page) => navigateTo(page)}
-                    canGoBack={history.length > 1}
-                    onGoBack={goBack}
-                />
+        <div className="min-h-screen bg-concrete-50 text-concrete-900 font-sans selection:bg-urban-green/20">
+            <Navbar />
 
-                {currentPage === 'home' && (
+            <Routes>
+                <Route path="/" element={
                     <>
                         <Hero />
                         <BentoGrid />
+                        <Footer />
                     </>
-                )}
+                } />
+                <Route path="/shop" element={<><ShopPage /><Footer /></>} />
+                <Route path="/snake/:id" element={<SnakeDetailPage />} />
+                <Route path="/blog" element={<><BlogPage /><Footer /></>} />
+                <Route path="/blog/:slug" element={<ArticleDetailPage />} />
+                <Route path="/about" element={<><AboutPage /><Footer /></>} />
+                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/maintenance" element={<MaintenanceView />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
 
-                {currentPage === 'shop' && <ShopPage />}
-                {currentPage === 'blog' && <BlogPage />}
-                {currentPage === 'about' && <AboutPage />}
-                {currentPage === 'maintenance' && <MaintenanceView />}
-                {currentPage === 'snake-detail' && selectedSnake && (
-                    <div className="bg-white min-h-screen pt-24 pb-20 px-4 animate-fade-in">
-                        <div className="max-w-7xl mx-auto">
-                            <button onClick={goBack} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
-                                <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
-                            </button>
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                                <div className="space-y-4">
-                                    <div
-                                        className="aspect-square bg-concrete-100 rounded-2xl overflow-hidden cursor-zoom-in relative group"
-                                        onClick={() => openLightbox(selectedSnake.images || [], selectedSnake.originalImages || [], 0)}
-                                    >
-                                        <img src={selectedSnake.imageUrl} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
-                                        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
-                                            <ZoomIn className="text-white drop-shadow-md" size={48} />
-                                        </div>
-                                    </div>
-                                    <div className="grid grid-cols-4 gap-4">
-                                        {(selectedSnake.images || []).map((img, i) => (
-                                            <div
-                                                key={i}
-                                                className="aspect-square bg-concrete-100 rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-urban-green transition-all"
-                                                onClick={() => openLightbox(selectedSnake.images || [], selectedSnake.originalImages || [], i)}
-                                            >
-                                                <img src={img} loading="lazy" className="w-full h-full object-cover" />
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                                <div>
-                                    <div className="flex items-center gap-4 mb-6">
-                                        <h1 className="text-4xl font-bold text-concrete-900">{selectedSnake.morph}</h1>
-                                        <span className={`px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${selectedSnake.availability === 'Available' ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                                            }`}>
-                                            {selectedSnake.availability}
-                                        </span>
-                                    </div>
-                                    <p className="text-3xl font-mono text-concrete-600 mb-8">${selectedSnake.price.toLocaleString()}</p>
-                                    <p className="text-concrete-500 leading-relaxed mb-8 text-lg">
-                                        {selectedSnake.description}
-                                    </p>
+            {/* Lightbox Overlay */}
+            <Lightbox
+                images={lightboxImages}
+                originalImages={lightboxOriginalImages}
+                initialIndex={lightboxIndex}
+                isOpen={lightboxOpen}
+                onClose={closeLightbox}
+            />
 
-                                    <div className="py-6 border-b border-concrete-100 space-y-4 bg-concrete-50/50 rounded-xl px-6 mt-6">
-                                        <h4 className="text-concrete-900 font-bold text-sm uppercase tracking-wide mb-4">詳細數據</h4>
-                                        <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                            <span className="text-concrete-400">編號</span>
-                                            <span className="text-concrete-900 font-mono">{selectedSnake.id}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                            <span className="text-concrete-400">基因</span>
-                                            <span className="text-concrete-900 font-medium text-right">{selectedSnake.genetics.join(' + ') || '未標註'}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                            <span className="text-concrete-400">孵化日期</span>
-                                            <span className="text-concrete-900">{selectedSnake.hatchDate}</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                            <span className="text-concrete-400">體重</span>
-                                            <span className="text-concrete-900">{selectedSnake.weight}g</span>
-                                        </div>
-                                        <div className="flex justify-between text-sm pt-2">
-                                            <span className="text-concrete-400">目前食譜</span>
-                                            <span className="text-concrete-900">{selectedSnake.diet}</span>
-                                        </div>
-                                    </div>
-
-                                    <div className="mt-10 flex gap-4">
-                                        <div className="bg-concrete-50 border border-concrete-200 rounded-xl p-6 text-center w-full">
-                                            <div className="flex items-center justify-center gap-2 text-concrete-500 text-xs mb-4">
-                                                <MapPin size={14} />
-                                                <span>提供全台安全寄送服務</span>
-                                            </div>
-                                            <div className="flex gap-4">
-                                                <button
-                                                    onClick={handleConstruction}
-                                                    className="flex-1 bg-concrete-900 text-white font-bold py-4 rounded-lg hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl"
-                                                >
-                                                    加入購物車 - NT$ {selectedSnake.price.toLocaleString()}
-                                                </button>
-                                                <button
-                                                    onClick={handleConstruction}
-                                                    className="px-6 border border-concrete-200 rounded-lg hover:bg-concrete-50 transition-colors"
-                                                >
-                                                    詢問細節
-                                                </button>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
-
-                {currentPage === 'article-detail' && <ArticleDetail />}
-                {currentPage === 'admin' && <AdminDashboard />}
-
-                {/* Lightbox Overlay */}
-                <Lightbox
-                    images={lightboxImages}
-                    originalImages={lightboxOriginalImages}
-                    initialIndex={lightboxIndex}
-                    isOpen={lightboxOpen}
-                    onClose={closeLightbox}
-                />
-
-                {/* Hide footer on maintenance or detail pages for cleaner look */}
-                {!['maintenance', 'snake-detail', 'article-detail', 'admin'].includes(currentPage) && <Footer />}
-            </div>
             <SpeedInsights />
             <Analytics />
+        </div>
+    );
+};
+
+const App: React.FC = () => {
+    return (
+        <ErrorBoundary>
+            <BrowserRouter>
+                <AppContent />
+            </BrowserRouter>
         </ErrorBoundary>
     );
 };

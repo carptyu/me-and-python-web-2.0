@@ -29,6 +29,7 @@ export interface Snake {
 
 export interface Article {
   id: string;
+  slug: string; // URL-friendly identifier for routing
   title: string;
   excerpt: string;
   content: string;

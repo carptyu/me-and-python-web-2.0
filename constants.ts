@@ -106,6 +106,7 @@ export const FEATURED_SNAKES: Snake[] = [
 export const ARTICLES: Article[] = [
   {
     id: 'ART-001',
+    slug: 'ball-python-care-guide',
     title: '飼養美學：打造球蟒的舒適豪宅',
     excerpt: '溫度、濕度與安全感。我們將解析如何在都市公寓中建立完美的爬蟲生態箱。',
     content: `
@@ -129,6 +130,7 @@ export const ARTICLES: Article[] = [
   },
   {
     id: 'ART-002',
+    slug: 'genetics-101',
     title: '基因解碼：隱性與共顯性的數學之美',
     excerpt: '深入淺出探討品系背後的遺傳學。如何預測你的下一窩蛋會孵出什麼驚喜？',
     content: '基因計算是現代爬蟲文化的精髓。在本指南中，我們將探討顯性、隱性以及超級形式 (Super Forms) 是如何互動的。透過簡單的孟德爾遺傳學，你也可以成為基因設計師...',
@@ -141,6 +143,7 @@ export const ARTICLES: Article[] = [
   },
   {
     id: 'ART-003',
+    slug: 'feeding-tips',
     title: '挑食應對：當你的球蟒絕食時',
     excerpt: '球蟒以季節性拒食聞名。在恐慌之前，先檢查你的環境設置與餵食技巧。',
     content: '球蟒是出了名的挑食者，尤其在冬季。首先，檢查溫濕度是否正確。如果一切正常，嘗試以下技巧：改變餌料大小、使用吹風機加熱餌料頭部增強氣味 (Scenting)，或是調整餵食時間至深夜...',
