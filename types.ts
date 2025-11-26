@@ -26,6 +26,7 @@ export interface Snake {
   images?: string[]; // Gallery images (compressed)
   originalImageUrl?: string; // Original full-resolution main image
   originalImages?: string[]; // Original full-resolution gallery images
+  createdAt?: string; // ISO date string for sorting by listing time
 }
 
 export interface Article {

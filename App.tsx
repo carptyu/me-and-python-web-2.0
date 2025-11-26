@@ -56,6 +56,8 @@ const AppContent: React.FC = () => {
     // Data State - Revised for Contentful
     const [snakes, setSnakes] = useState<Snake[]>([]);
     const [isLoadingSnakes, setIsLoadingSnakes] = useState(true);
+    const [sortBy, setSortBy] = useState<'default' | 'priceDesc' | 'priceAsc' | 'listingTime' | 'birthDateYoung' | 'birthDateOld'>('default');
+
 
     // Fetch Data from Contentful on Mount
     useEffect(() => {
@@ -307,19 +309,35 @@ const AppContent: React.FC = () => {
                         <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-3">選購您的夥伴。</h1>
                         <p className="text-lg text-concrete-500">在安靜的都市角落，它是最完美的藝術品。</p>
                     </div>
-                    <div className="mt-6 md:mt-0 flex gap-2 overflow-x-auto no-scrollbar w-full md:w-auto pb-2">
-                        <button className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-concrete-900 text-white border-concrete-900">
-                            全部顯示
-                        </button>
-                        {['隱性基因', '共顯性', '投資等級'].map((filter, i) => (
-                            <button
-                                key={i}
-                                onClick={handleConstruction}
-                                className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-white text-concrete-600 border-concrete-200 hover:border-concrete-400 hover:text-concrete-900"
-                            >
-                                {filter}
+                    <div className="mt-6 md:mt-0 flex flex-col gap-4 w-full md:w-auto">
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 order-2 md:order-1">
+                            <button className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-concrete-900 text-white border-concrete-900">
+                                全部顯示
                             </button>
-                        ))}
+                            {['隱性基因', '共顯性', '投資等級'].map((filter, i) => (
+                                <button
+                                    key={i}
+                                    onClick={handleConstruction}
+                                    className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-white text-concrete-600 border-concrete-200 hover:border-concrete-400 hover:text-concrete-900"
+                                >
+                                    {filter}
+                                </button>
+                            ))}
+                        </div>
+                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 order-1 md:order-2 justify-end">
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value as any)}
+                                className="px-4 py-2 rounded-lg text-sm border border-concrete-200 bg-white text-concrete-900 focus:outline-none focus:ring-2 focus:ring-urban-green/20"
+                            >
+                                <option value="default">店長推薦</option>
+                                <option value="listingTime">最新上架</option>
+                                <option value="priceDesc">價格: 高 → 低</option>
+                                <option value="priceAsc">價格: 低 → 高</option>
+                                <option value="birthDateYoung">小朋友優先</option>
+                                <option value="birthDateOld">大人優先</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
@@ -333,9 +351,35 @@ const AppContent: React.FC = () => {
                 ) : (
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {snakes.length > 0 ? (
-                            snakes.map(snake => (
-                                <SnakeCard key={snake.id} snake={snake} onViewDetails={handleViewDetails} />
-                            ))
+                            [...snakes]
+                                .sort((a, b) => {
+                                    if (sortBy === 'default') return 0;
+                                    if (sortBy === 'priceDesc') return b.price - a.price;
+                                    if (sortBy === 'priceAsc') return a.price - b.price;
+                                    if (sortBy === 'listingTime') {
+                                        // Sort by createdAt if available, otherwise fallback to id or keep order
+                                        if (a.createdAt && b.createdAt) {
+                                            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+                                        }
+                                        return 0;
+                                    }
+                                    if (sortBy === 'birthDateYoung') {
+                                        // Sort by hatchDate (youngest first = latest date first)
+                                        if (a.hatchDate === 'Unknown') return 1;
+                                        if (b.hatchDate === 'Unknown') return -1;
+                                        return new Date(b.hatchDate).getTime() - new Date(a.hatchDate).getTime();
+                                    }
+                                    if (sortBy === 'birthDateOld') {
+                                        // Sort by hatchDate (oldest first = earliest date first)
+                                        if (a.hatchDate === 'Unknown') return 1;
+                                        if (b.hatchDate === 'Unknown') return -1;
+                                        return new Date(a.hatchDate).getTime() - new Date(b.hatchDate).getTime();
+                                    }
+                                    return 0;
+                                })
+                                .map(snake => (
+                                    <SnakeCard key={snake.id} snake={snake} onViewDetails={handleViewDetails} />
+                                ))
                         ) : (
                             <div className="col-span-full text-center py-20">
                                 <p className="text-concrete-400">目前沒有上架的球蟒，或無法連接至資料庫。</p>

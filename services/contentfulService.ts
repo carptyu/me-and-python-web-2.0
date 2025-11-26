@@ -148,6 +148,7 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
     images: finalImages.map(getOptimizedImageUrl),
     originalImageUrl: getOriginalImageUrl(originalMainImage),
     originalImages: finalImages.map(getOriginalImageUrl),
+    createdAt: entry.sys.createdAt,
   };
 };
 
