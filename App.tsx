@@ -519,7 +519,15 @@ const AppContent: React.FC = () => {
                         </div>
                         <div>
                             <div className="flex items-center gap-4 mb-6">
-                                <h1 className="text-4xl font-bold text-concrete-900 flex-1 leading-tight">{snake.morph}</h1>
+                                <h1 className="text-2xl font-bold text-concrete-900 flex-1 leading-tight flex items-center gap-3">
+                                    <span className={`text-lg font-bold tracking-wider px-3 py-1 rounded-full backdrop-blur-md shadow-sm flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${snake.gender === 'Male'
+                                        ? 'bg-blue-50 text-blue-600'
+                                        : 'bg-pink-50 text-pink-600'
+                                        }`}>
+                                        {snake.gender === 'Male' ? '男生' : '女生'}
+                                    </span>
+                                    {snake.morph}
+                                </h1>
                                 <span className={`flex-shrink-0 whitespace-nowrap px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider ${snake.availability === Availability.Available ? 'bg-green-100 text-green-700' :
                                     snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700' :
                                         snake.availability === Availability.Sold ? 'bg-red-100 text-red-700' :

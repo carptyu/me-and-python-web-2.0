@@ -14,15 +14,25 @@ const SnakeCard: React.FC<SnakeCardProps> = ({ snake, onViewDetails }) => {
     >
       {/* Status Indicator */}
       <div className="absolute top-4 left-4 z-10">
-        <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 ${snake.availability === Availability.Available ? 'bg-white/90 text-urban-green shadow-sm' :
-            snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700 shadow-sm' :
-              snake.availability === Availability.Sold ? 'bg-red-100 text-red-700 shadow-sm' :
-                'bg-blue-50 text-blue-600 shadow-sm' // PreOrder
+        <span className={`text-[10px] font-bold uppercase tracking-wider px-3 py-1 flex items-center justify-center ${snake.availability === Availability.Available ? 'bg-white/90 text-urban-green shadow-sm' :
+          snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700 shadow-sm' :
+            snake.availability === Availability.Sold ? 'bg-red-100 text-red-700 shadow-sm' :
+              'bg-blue-50 text-blue-600 shadow-sm' // PreOrder
           }`}>
           {snake.availability === Availability.Available ? '現貨' :
             snake.availability === Availability.OnHold ? '保留中' :
               snake.availability === Availability.Sold ? '已售出' :
                 '開放預購'}
+        </span>
+      </div>
+
+      {/* Gender Indicator (Top Right Text Badge) */}
+      <div className="absolute top-4 right-4 z-10">
+        <span className={`text-[10px] font-bold tracking-wider px-3 py-1 rounded-full backdrop-blur-md shadow-sm flex items-center gap-1 ${snake.gender === 'Male'
+          ? 'bg-blue-50/90 text-blue-600'
+          : 'bg-pink-50/90 text-pink-600'
+          }`}>
+          {snake.gender === 'Male' ? '男生' : '女生'}
         </span>
       </div>
 
@@ -43,9 +53,6 @@ const SnakeCard: React.FC<SnakeCardProps> = ({ snake, onViewDetails }) => {
           <h3 className="text-lg font-bold text-concrete-900 mb-2 leading-snug group-hover:text-urban-green transition-colors">
             {snake.morph}
           </h3>
-          <p className="text-concrete-500 text-sm line-clamp-2 mb-4 font-light">
-            {snake.gender === 'Male' ? '公' : '母'} • {snake.weight}g
-          </p>
         </div>
 
         <div className="flex items-center justify-between mt-auto pt-4 border-t border-concrete-100">
