@@ -232,8 +232,8 @@ const AppContent: React.FC = () => {
             <div className="text-center px-6 max-w-4xl mx-auto z-10 animate-slide-up opacity-0 flex flex-col items-center" style={{ animationDelay: '0.1s' }}>
                 <h2 className="text-urban-green font-bold text-xs md:text-sm mb-4 tracking-[0.2em] uppercase bg-urban-green/10 px-3 py-1 rounded-full">Urban Jungle Collection</h2>
                 <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold text-concrete-900 mb-6 tracking-tight leading-[1.1]">
-                    <span className="block md:inline">城市綠洲。</span>
-                    <span className="text-concrete-400 block md:inline mt-2 md:mt-0">迷蟒陪伴。</span>
+                    <span className="block">城市綠洲</span>
+                    <span className="text-concrete-400 block mt-2">迷蟒陪伴</span>
                 </h1>
                 <p className="text-lg md:text-2xl text-concrete-500 font-light max-w-2xl mx-auto mb-10">
                     在水泥叢林中，尋找屬於你的寧靜角落。Me&Python，來自頂尖基因庫的藝術品。
