@@ -57,6 +57,7 @@ const AppContent: React.FC = () => {
     const [snakes, setSnakes] = useState<Snake[]>([]);
     const [isLoadingSnakes, setIsLoadingSnakes] = useState(true);
     const [sortBy, setSortBy] = useState<'default' | 'priceDesc' | 'priceAsc' | 'listingTime' | 'birthDateYoung' | 'birthDateOld'>('default');
+    const [showSoldOut, setShowSoldOut] = useState(false);
 
 
     // Fetch Data from Contentful on Mount
@@ -231,8 +232,8 @@ const AppContent: React.FC = () => {
             <div className="text-center px-6 max-w-4xl mx-auto z-10 animate-slide-up opacity-0 flex flex-col items-center" style={{ animationDelay: '0.1s' }}>
                 <h2 className="text-urban-green font-bold text-xs md:text-sm mb-4 tracking-[0.2em] uppercase bg-urban-green/10 px-3 py-1 rounded-full">Urban Jungle Collection</h2>
                 <h1 className="text-4xl md:text-7xl lg:text-8xl font-bold text-concrete-900 mb-6 tracking-tight leading-[1.1]">
-                    城市綠洲。<br className="hidden md:block" />
-                    <span className="text-concrete-400">迷蟒陪伴。</span>
+                    <span className="block md:inline">城市綠洲。</span>
+                    <span className="text-concrete-400 block md:inline mt-2 md:mt-0">迷蟒陪伴。</span>
                 </h1>
                 <p className="text-lg md:text-2xl text-concrete-500 font-light max-w-2xl mx-auto mb-10">
                     在水泥叢林中，尋找屬於你的寧靜角落。Me&Python，來自頂尖基因庫的藝術品。
@@ -313,19 +314,21 @@ const AppContent: React.FC = () => {
                         <p className="text-lg text-concrete-500">在安靜的都市角落，它是最完美的藝術品。</p>
                     </div>
                     <div className="mt-6 md:mt-0 flex flex-col gap-4 w-full md:w-auto">
-                        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 order-2 md:order-1">
-                            <button className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-concrete-900 text-white border-concrete-900">
-                                全部顯示
-                            </button>
-                            {['隱性基因', '共顯性', '投資等級'].map((filter, i) => (
-                                <button
-                                    key={i}
-                                    onClick={handleConstruction}
-                                    className="px-5 py-2 rounded-full text-sm whitespace-nowrap transition-all border bg-white text-concrete-600 border-concrete-200 hover:border-concrete-400 hover:text-concrete-900"
-                                >
-                                    {filter}
-                                </button>
-                            ))}
+                        <div className="flex items-center gap-2 order-2 md:order-1">
+                            <label className="group flex items-center gap-2 cursor-pointer select-none">
+                                <div className={`w-10 h-6 rounded-full p-1 transition-colors duration-300 ease-in-out ${showSoldOut ? 'bg-concrete-900' : 'bg-concrete-200'}`}>
+                                    <div className={`bg-white w-4 h-4 rounded-full shadow-sm transform transition-transform duration-300 ease-in-out ${showSoldOut ? 'translate-x-4' : 'translate-x-0'}`} />
+                                </div>
+                                <input
+                                    type="checkbox"
+                                    className="hidden"
+                                    checked={showSoldOut}
+                                    onChange={(e) => setShowSoldOut(e.target.checked)}
+                                />
+                                <span className={`text-sm font-medium transition-colors ${showSoldOut ? 'text-concrete-900' : 'text-concrete-500 group-hover:text-concrete-700'}`}>
+                                    顯示已售出
+                                </span>
+                            </label>
                         </div>
                         <div className="flex gap-2 overflow-x-auto no-scrollbar pb-2 order-1 md:order-2 justify-end">
                             <select
@@ -355,6 +358,7 @@ const AppContent: React.FC = () => {
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                         {snakes.length > 0 ? (
                             [...snakes]
+                                .filter(snake => showSoldOut || snake.availability !== Availability.Sold)
                                 .sort((a, b) => {
                                     if (sortBy === 'default') return 0;
                                     if (sortBy === 'priceDesc') return b.price - a.price;
