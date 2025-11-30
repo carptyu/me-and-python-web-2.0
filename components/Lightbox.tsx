@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
+import Watermark from './Watermark';
 
 interface LightboxProps {
     images: string[];
@@ -194,6 +195,7 @@ const Lightbox: React.FC<LightboxProps> = ({ images, originalImages, initialInde
                     onClick={handleImageClick}
                     onMouseDown={handleMouseDown}
                 />
+                {/* <Watermark size="lg" className="bottom-4 right-4" /> */}
             </div>
 
             {/* Controls / Info */}

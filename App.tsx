@@ -10,6 +10,7 @@ import { fetchSnakesFromContentful } from './services/contentfulService';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react"
 import Lightbox from './components/Lightbox';
+import Watermark from './components/Watermark';
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
     constructor(props: { children: React.ReactNode }) {
@@ -493,6 +494,7 @@ const AppContent: React.FC = () => {
                                 onClick={() => openLightbox(snake.images || [], snake.originalImages || [], activeImageIndex)}
                             >
                                 <img src={displayImage} loading="lazy" className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                                {/* <Watermark size="lg" /> */}
 
                                 {images.length > 1 && (
                                     <>

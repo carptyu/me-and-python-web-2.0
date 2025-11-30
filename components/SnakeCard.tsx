@@ -1,5 +1,6 @@
 import React from 'react';
 import { Snake, Availability } from '../types';
+import Watermark from './Watermark';
 
 interface SnakeCardProps {
   snake: Snake;
@@ -44,6 +45,7 @@ const SnakeCard: React.FC<SnakeCardProps> = ({ snake, onViewDetails }) => {
           loading="lazy"
           className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 saturate-[0.9] group-hover:saturate-100"
         />
+        {/* <Watermark /> */}
       </div>
 
       {/* Content Area */}
