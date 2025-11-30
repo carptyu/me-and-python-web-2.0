@@ -110,10 +110,10 @@ export const ARTICLES: Article[] = [
     title: '飼養美學：打造球蟒的舒適豪宅',
     excerpt: '溫度、濕度與安全感。我們將解析如何在都市公寓中建立完美的爬蟲生態箱。',
     content: `
-      <p>在繁忙的都市中飼養球蟒 (<em>Python regius</em>) 是一種獨特的體驗。與貓狗不同，牠們需要的是一個精準控制的微氣候環境。</p>
+      <p>在繁忙的都市中飼養球蟒 (<em>Python regius</em>) 是一種獨特的體驗。與貓狗不同，他們需要的是一個精準控制的微氣候環境。</p>
       <br/>
       <h3 class="text-xl font-bold text-urban-green mb-2">1. 溫度的梯度 (Temperature Gradients)</h3>
-      <p>球蟒是外溫動物。牠們需要一個 31-33°C 的熱點區和 24-27°C 的冷區。建議使用高品質的溫控器來調節加熱墊或陶瓷燈。切勿使用無控溫的熱源，這極其危險。</p>
+      <p>球蟒是外溫動物。他們需要一個 31-33°C 的熱點區和 24-27°C 的冷區。建議使用高品質的溫控器來調節加熱墊或陶瓷燈。切勿使用無控溫的熱源，這極其危險。</p>
       <br/>
       <h3 class="text-xl font-bold text-urban-green mb-2">2. 濕度即健康 (Humidity is Health)</h3>
       <p>環境濕度應保持在 60-70%。在蛻皮期間，請提升至 80%。乾燥的冷氣房是球蟒的大敵，可能導致脫皮不全或呼吸道感染。</p>

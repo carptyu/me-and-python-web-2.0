@@ -5,7 +5,7 @@ import SnakeCard from './components/SnakeCard';
 
 import { FEATURED_SNAKES, ARTICLES } from './constants';
 import { Snake, Article, Availability } from './types';
-import { ArrowRight, ChevronRight, ChevronLeft, Instagram, Twitter, Mail, MapPin, Construction, ArrowLeft, ZoomIn, ExternalLink, Loader2 } from 'lucide-react';
+import { ArrowRight, ChevronRight, ChevronLeft, Instagram, Facebook, MapPin, Construction, ArrowLeft, ZoomIn, ExternalLink, Loader2 } from 'lucide-react';
 import { fetchSnakesFromContentful } from './services/contentfulService';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react"
@@ -107,6 +107,13 @@ const AppContent: React.FC = () => {
     const handleViewArticle = (article: Article) => navigate(`/blog/${article.slug}`);
 
     // --- Sub-Components ---
+
+    const LineIcon = ({ size = 24, className = "" }: { size?: number, className?: string }) => (
+        <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
+            <path d="M22.28 12.33C22.28 6.78 17.29 2.26 11.14 2.26C4.99 2.26 0 6.78 0 12.33C0 16.68 2.89 20.44 7.04 21.84C7.31 21.96 7.48 22.13 7.54 22.42C7.6 22.75 7.56 23.16 7.53 23.47C7.53 23.47 7.42 24.1 7.4 24.17C7.36 24.36 7.28 24.64 7.55 24.68C7.82 24.72 8.11 24.58 8.35 24.4C8.6 24.22 12.28 21.65 13.8 20.57C18.8 20.3 22.28 16.66 22.28 12.33Z" fill="currentColor" />
+            <text x="11.14" y="15" fontSize="6.5" fontWeight="900" fill="white" textAnchor="middle" fontFamily="Arial, sans-serif" letterSpacing="0.5px">LINE</text>
+        </svg>
+    );
 
     // Admin Dashboard Component (Read-Only)
     const AdminDashboard = () => {
@@ -311,7 +318,7 @@ const AppContent: React.FC = () => {
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-concrete-200 pb-8">
                     <div>
                         <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-3">選購您的夥伴。</h1>
-                        <p className="text-lg text-concrete-500">在安靜的都市角落，它是最完美的藝術品。</p>
+                        <p className="text-lg text-concrete-500">在安靜的都市角落，他是最完美的藝術品。</p>
                     </div>
                     <div className="mt-6 md:mt-0 flex flex-col gap-4 w-full md:w-auto">
                         <div className="flex items-center gap-2 order-2 md:order-1">
@@ -707,9 +714,30 @@ const AppContent: React.FC = () => {
                     <div>
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">關注我們</h4>
                         <div className="flex gap-4 text-concrete-400">
-                            <Instagram size={20} onClick={handleConstruction} className="hover:text-urban-green cursor-pointer transition-colors" />
-                            <Twitter size={20} onClick={handleConstruction} className="hover:text-urban-green cursor-pointer transition-colors" />
-                            <Mail size={20} onClick={handleConstruction} className="hover:text-urban-green cursor-pointer transition-colors" />
+                            <a
+                                href="https://www.instagram.com/meandpython?igsh=MTRmemlhaTA0ZWoxYg%3D%3D&utm_source=qr"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-urban-green cursor-pointer transition-colors"
+                            >
+                                <Instagram size={24} />
+                            </a>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61558807599321"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-urban-green cursor-pointer transition-colors"
+                            >
+                                <Facebook size={24} />
+                            </a>
+                            <a
+                                href="https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0stFjTg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="hover:text-urban-green cursor-pointer transition-colors"
+                            >
+                                <LineIcon size={24} />
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -769,7 +797,9 @@ const AppContent: React.FC = () => {
                         </div>
                         <h3 className="text-2xl font-bold text-concrete-900 mb-4 text-center">已複製詢問訊息！</h3>
                         <p className="text-concrete-600 text-center mb-6 leading-relaxed">
-                            請私訊我們的 <span className="font-bold text-urban-green">Instagram</span> 或 <span className="font-bold text-urban-green">Facebook 專頁</span>，我們會盡快回覆您！
+                            請私訊我們的 <a href="https://www.instagram.com/meandpython?igsh=MTRmemlhaTA0ZWoxYg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="font-bold text-green-600 hover:underline">Instagram</a> 或 <a href="https://www.facebook.com/profile.php?id=61558807599321" target="_blank" rel="noopener noreferrer" className="font-bold text-green-600 hover:underline">Facebook 專頁</a>，我們會盡快回覆您！
+                            <br /><br />
+                            想得知最新消息，歡迎加入我們的 <a href="https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0stFjTg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener noreferrer" className="font-bold text-green-600 hover:underline">Line 群組</a>！
                         </p>
                         <button
                             onClick={() => setShowInquiryAlert(false)}
