@@ -166,14 +166,14 @@ const AppContent: React.FC = () => {
                     <span className="text-concrete-400 block mt-2">迷蟒陪伴</span>
                 </h1>
                 <p className="text-lg md:text-2xl text-concrete-500 font-light max-w-2xl mx-auto mb-10">
-                    在水泥叢林中，尋找屬於你的寧靜角落。Me&Python，來自頂尖基因庫的藝術品。
+                    頂尖基因藝術，掌心的靜謐靈魂
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-6 sm:px-0">
                     <button
                         onClick={() => navigate('/shop')}
                         className="bg-concrete-900 text-white rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl w-full sm:w-auto"
                     >
-                        探索現貨
+                        邂逅夥伴
                     </button>
                     <button
                         onClick={() => navigate('/about')}
@@ -193,8 +193,8 @@ const AppContent: React.FC = () => {
         <div className="bg-white py-24 md:py-32 border-t border-concrete-200">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
-                    <h2 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-4">不只是爬蟲。</h2>
-                    <p className="text-concrete-500 text-lg">更是現代居家美學的一部分。</p>
+                    <h2 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-4">不只是爬蟲</h2>
+                    <p className="text-concrete-500 text-lg">更是現代居家美學的一部分</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     <div className="md:col-span-2 lg:col-span-2 bg-concrete-100 rounded-2xl overflow-hidden h-[300px] md:h-[500px] relative group" onClick={handleConstruction}>
@@ -206,8 +206,9 @@ const AppContent: React.FC = () => {
                     </div>
                     <div className="bg-concrete-800 rounded-2xl overflow-hidden h-[300px] md:h-[500px] relative group">
                         <div className="absolute inset-0 z-10 p-8 md:p-10 flex flex-col justify-start items-center text-center">
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mt-4 mb-2">專業支援</h3>
-                            <p className="text-concrete-300">24/7 全天候 AI 顧問。</p>
+                            <p className="text-white/80 uppercase text-xs font-bold tracking-widest mt-4 mb-2">SUPPORT</p>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">專業諮詢 全程相伴</h3>
+
                         </div>
                         <img src="https://picsum.photos/seed/support/600/800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-40 mix-blend-overlay" />
                     </div>
@@ -240,8 +241,8 @@ const AppContent: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-concrete-200 pb-8">
                     <div>
-                        <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-3">選購您的夥伴。</h1>
-                        <p className="text-lg text-concrete-500">在安靜的都市角落，他是最完美的藝術品。</p>
+                        <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-3">尋找您的夥伴</h1>
+                        <p className="text-lg text-concrete-500">是寵物 是家人 更是美感本身</p>
                     </div>
                     <div className="mt-6 md:mt-0 flex flex-col gap-4 w-full md:w-auto">
                         <div className="flex items-center gap-2 order-2 md:order-1">
@@ -344,7 +345,7 @@ const AppContent: React.FC = () => {
             return (
                 <div className="min-h-screen flex items-center justify-center bg-concrete-50">
                     <div className="text-center">
-                        <h1 className="text-2xl font-bold text-concrete-900 mb-4">找不到此商品</h1>
+                        <h1 className="text-2xl font-bold text-concrete-900 mb-4">找不到此夥伴</h1>
                         <button
                             onClick={() => navigate('/shop')}
                             className="bg-concrete-900 text-white px-6 py-3 rounded-lg hover:bg-concrete-800 transition-colors"
@@ -438,7 +439,7 @@ const AppContent: React.FC = () => {
                                         snake.availability === Availability.Sold ? 'bg-red-100 text-red-700' :
                                             'bg-blue-50 text-blue-600'
                                     }`}>
-                                    {snake.availability === Availability.Available ? '現貨' :
+                                    {snake.availability === Availability.Available ? '尋家中' :
                                         snake.availability === Availability.OnHold ? '保留中' :
                                             snake.availability === Availability.Sold ? '已售出' :
                                                 '開放預購'}
@@ -507,7 +508,7 @@ const AppContent: React.FC = () => {
                     <div>
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">線上商店</h4>
                         <ul className="space-y-3 text-concrete-500">
-                            <li><button onClick={() => navigate('/shop')} className="hover:text-concrete-900 transition-colors">全部商品</button></li>
+                            <li><button onClick={() => navigate('/shop')} className="hover:text-concrete-900 transition-colors">全部夥伴</button></li>
                             <li><span className="text-concrete-300 cursor-not-allowed">周邊商品 (維修中)</span></li>
                         </ul>
                     </div>
