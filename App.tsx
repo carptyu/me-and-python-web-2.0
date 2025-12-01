@@ -3,14 +3,14 @@ import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate } from '
 import Navbar from './components/Navbar';
 import SnakeCard from './components/SnakeCard';
 
-import { FEATURED_SNAKES, ARTICLES } from './constants';
-import { Snake, Article, Availability } from './types';
-import { ArrowRight, ChevronRight, ChevronLeft, Instagram, Facebook, MapPin, Construction, ArrowLeft, ZoomIn, ExternalLink, Loader2 } from 'lucide-react';
+import { FEATURED_SNAKES } from './constants';
+import { Snake, Availability } from './types';
+import { ChevronRight, ChevronLeft, Instagram, Facebook, MapPin, Construction, ArrowLeft, ZoomIn, Loader2 } from 'lucide-react';
 import { fetchSnakesFromContentful } from './services/contentfulService';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react"
 import Lightbox from './components/Lightbox';
-import Watermark from './components/Watermark';
+
 
 class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean, error: Error | null }> {
     constructor(props: { children: React.ReactNode }) {
@@ -105,7 +105,7 @@ const AppContent: React.FC = () => {
 
     const handleConstruction = () => navigate('/maintenance');
     const handleViewDetails = (snake: Snake) => navigate(`/snake/${snake.id}`);
-    const handleViewArticle = (article: Article) => navigate(`/blog/${article.slug}`);
+
 
     // --- Sub-Components ---
 
@@ -116,85 +116,7 @@ const AppContent: React.FC = () => {
         </svg>
     );
 
-    // Admin Dashboard Component (Read-Only)
-    const AdminDashboard = () => {
-        return (
-            <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-                <div className="flex justify-between items-center mb-8">
-                    <h1 className="text-3xl font-bold text-concrete-900">後台管理系統</h1>
-                </div>
 
-                <div className="bg-white rounded-2xl p-8 shadow-xl border border-concrete-200 text-center">
-                    <div className="flex justify-center mb-6">
-                        <div className="bg-urban-green/10 p-4 rounded-full">
-                            <ExternalLink size={48} className="text-urban-green" />
-                        </div>
-                    </div>
-                    <h2 className="text-2xl font-bold text-concrete-900 mb-4">
-                        請前往 Contentful 官方網站進行管理
-                    </h2>
-                    <p className="text-concrete-500 mb-8 max-w-lg mx-auto">
-                        為了確保資料的安全性與完整性，目前我們已將所有新增、編輯與刪除功能移至 Contentful 官方後台。
-                    </p>
-
-                    <a
-                        href="https://app.contentful.com"
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center gap-2 bg-concrete-900 text-white px-8 py-4 rounded-lg font-bold hover:bg-black transition-all shadow-lg hover:shadow-xl"
-                    >
-                        前往 Contentful 登入 <ExternalLink size={18} />
-                    </a>
-
-                    <div className="mt-12 border-t border-concrete-100 pt-8">
-                        <h3 className="text-lg font-bold text-concrete-900 mb-4">目前已上架商品預覽</h3>
-                        <div className="overflow-x-auto">
-                            <table className="w-full text-left">
-                                <thead className="bg-concrete-50 text-xs uppercase text-concrete-500 font-bold">
-                                    <tr>
-                                        <th className="p-4">圖片</th>
-                                        <th className="p-4">ID / 品系</th>
-                                        <th className="p-4">價格</th>
-                                        <th className="p-4">狀態</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-concrete-100">
-                                    {snakes.map(snake => (
-                                        <tr key={snake.id} className="hover:bg-concrete-50/50 transition-colors">
-                                            <td className="p-4">
-                                                <div className="w-12 h-12 rounded-lg overflow-hidden bg-concrete-100">
-                                                    <img src={snake.imageUrl} alt="" className="w-full h-full object-cover" />
-                                                </div>
-                                            </td>
-                                            <td className="p-4">
-                                                <div className="font-bold text-concrete-900">{snake.morph}</div>
-                                                <div className="text-xs text-concrete-400 font-mono">{snake.id}</div>
-                                            </td>
-                                            <td className="p-4 font-mono text-concrete-600">
-                                                ${snake.price.toLocaleString()}
-                                            </td>
-                                            <td className="p-4">
-                                                <span className={`text-[10px] font-bold px-2 py-1 rounded-full ${snake.availability === Availability.Available ? 'bg-green-100 text-green-700' :
-                                                    snake.availability === Availability.OnHold ? 'bg-yellow-100 text-yellow-700' :
-                                                        snake.availability === Availability.Sold ? 'bg-red-100 text-red-700' :
-                                                            'bg-blue-50 text-blue-600'
-                                                    }`}>
-                                                    {snake.availability === Availability.Available ? '現貨' :
-                                                        snake.availability === Availability.OnHold ? '保留中' :
-                                                            snake.availability === Availability.Sold ? '已售出' :
-                                                                '開放預購'}
-                                                </span>
-                                            </td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        );
-    };
 
     const MaintenanceView = () => (
         <div className="min-h-screen bg-concrete-100 flex flex-col items-center justify-center px-6 relative overflow-hidden">
@@ -406,37 +328,7 @@ const AppContent: React.FC = () => {
         </div>
     );
 
-    const BlogPage = () => (
-        <div className="pt-24 pb-20 bg-concrete-50 min-h-screen px-4">
-            <div className="max-w-4xl mx-auto text-center mb-12">
-                <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-4">飼養日誌。</h1>
-                <p className="text-lg text-concrete-500">關於飼養技巧、基因知識與爬蟲生活方式。</p>
-            </div>
-            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8">
-                {ARTICLES.map((article, index) => (
-                    <div key={index} className="bg-white rounded-2xl overflow-hidden shadow-sm border border-concrete-200 hover:shadow-md transition-all group cursor-pointer" onClick={() => handleViewArticle(article)}>
-                        <div className="h-64 overflow-hidden">
-                            <img src={article.imageUrl} alt={article.title} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" />
-                        </div>
-                        <div className="p-8">
-                            <div className="flex items-center gap-2 text-xs font-bold text-urban-green uppercase tracking-wider mb-3">
-                                <span>{article.category}</span>
-                                <span className="text-concrete-300">•</span>
-                                <span className="text-concrete-400">{article.date}</span>
-                            </div>
-                            <h3 className="text-2xl font-bold text-concrete-900 mb-3 group-hover:text-urban-green transition-colors">
-                                {article.title}
-                            </h3>
-                            <p className="text-concrete-500 line-clamp-2 leading-relaxed text-sm md:text-base">{article.excerpt}</p>
-                            <div className="mt-4 flex items-center text-concrete-900 font-medium text-sm group-hover:translate-x-2 transition-transform">
-                                閱讀全文 <ArrowRight size={14} className="ml-2" />
-                            </div>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+
 
     const SnakeDetailPage = () => {
         const { id } = useParams<{ id: string }>();
@@ -604,86 +496,9 @@ const AppContent: React.FC = () => {
         );
     };
 
-    const ArticleDetailPage = () => {
-        const { slug } = useParams<{ slug: string }>();
-        const article = ARTICLES.find(a => a.slug === slug);
 
-        if (!article) {
-            return (
-                <div className="min-h-screen flex items-center justify-center bg-concrete-50">
-                    <div className="text-center">
-                        <h1 className="text-2xl font-bold text-concrete-900 mb-4">找不到此文章</h1>
-                        <button
-                            onClick={() => navigate('/blog')}
-                            className="bg-concrete-900 text-white px-6 py-3 rounded-lg hover:bg-concrete-800 transition-colors"
-                        >
-                            返回部落格
-                        </button>
-                    </div>
-                </div>
-            );
-        }
 
-        return (
-            <div className="bg-white min-h-screen pt-24 pb-20 px-4">
-                <div className="max-w-3xl mx-auto">
-                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
-                        <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
-                    </button>
-                    <h1 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-6 leading-tight">{article.title}</h1>
-                    <div className="flex items-center gap-4 border-b border-concrete-200 pb-8 mb-10">
-                        <div className="w-10 h-10 rounded-full bg-concrete-100 overflow-hidden">
-                            <img src="https://picsum.photos/seed/author/100/100" alt="Author" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-bold text-concrete-900">Me&Python Team</p>
-                            <p className="text-xs text-concrete-500">{article.date} • {article.readTime}</p>
-                        </div>
-                    </div>
-                    <div className="prose prose-lg prose-concrete max-w-none">
-                        <img src={article.imageUrl} alt={article.title} className="w-full rounded-2xl mb-10" />
-                        <p className="lead text-xl text-concrete-600 mb-8">{article.excerpt}</p>
-                        <div dangerouslySetInnerHTML={{ __html: article.content }} />
-                    </div>
-                </div>
-            </div>
-        );
-    };
 
-    const AboutPage = () => (
-        <div className="bg-white min-h-screen pt-24 pb-20 px-4">
-            <div className="max-w-3xl mx-auto text-center mb-20">
-                <h1 className="text-4xl md:text-6xl font-bold text-concrete-900 mb-6">生於都市。<br />源於自然。</h1>
-                <p className="text-xl text-concrete-500 leading-relaxed font-light">
-                    我們不只是繁殖者。我們致力於推廣一種將自然美學融入現代生活的風格。
-                </p>
-            </div>
-            <div className="max-w-5xl mx-auto space-y-24 md:space-y-32">
-                <div className="flex flex-col md:flex-row items-center gap-8 md:gap-16">
-                    <div className="flex-1 order-2 md:order-1">
-                        <h3 className="text-2xl md:text-3xl font-bold text-concrete-900 mb-4">嚴格的環境控管。</h3>
-                        <p className="text-base md:text-lg text-concrete-500 leading-relaxed">
-                            從產卵的那一刻起，每一個變數都在監控之中。溫度、濕度、墊材品質。我們相信，優質的基因值得在最完美的環境中成長。就像你在都市中追求的生活品質一樣。
-                        </p>
-                    </div>
-                    <div className="flex-1 order-1 md:order-2 w-full">
-                        <img src="https://picsum.photos/seed/about1/800/600" className="rounded-2xl shadow-lg w-full" />
-                    </div>
-                </div>
-                <div className="flex flex-col md:flex-row-reverse items-center gap-8 md:gap-16">
-                    <div className="flex-1 order-2 md:order-1">
-                        <h3 className="text-2xl md:text-3xl font-bold text-concrete-900 mb-4">基因純度保證。</h3>
-                        <p className="text-base md:text-lg text-concrete-500 leading-relaxed">
-                            沒有猜測。我們使用最新的基因測試和系譜追蹤，確保當您購買「Het Clown」時，它是 100% 保證的。這是一份科學的承諾，也是對生命的尊重。
-                        </p>
-                    </div>
-                    <div className="flex-1 order-1 md:order-2 w-full">
-                        <img src="https://picsum.photos/seed/about2/800/600" className="rounded-2xl shadow-lg w-full" />
-                    </div>
-                </div>
-            </div>
-        </div>
-    );
 
     const Footer = () => (
         <footer className="bg-concrete-50 border-t border-concrete-200 pt-20 pb-10">

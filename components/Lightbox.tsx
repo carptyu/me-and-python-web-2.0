@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { X, ChevronLeft, ChevronRight } from 'lucide-react';
-import Watermark from './Watermark';
+
 
 interface LightboxProps {
     images: string[];

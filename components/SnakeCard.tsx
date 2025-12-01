@@ -1,6 +1,6 @@
 import React from 'react';
 import { Snake, Availability } from '../types';
-import Watermark from './Watermark';
+
 
 interface SnakeCardProps {
   snake: Snake;
