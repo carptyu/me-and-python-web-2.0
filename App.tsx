@@ -693,26 +693,20 @@ const AppContent: React.FC = () => {
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">線上商店</h4>
                         <ul className="space-y-3 text-concrete-500">
                             <li><button onClick={() => navigate('/shop')} className="hover:text-concrete-900 transition-colors">全部商品</button></li>
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">公蛇 (Males)</button></li>
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">母蛇 (Females)</button></li>
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">周邊商品</button></li>
+                            <li><span className="text-concrete-300 cursor-not-allowed">周邊商品 (維修中)</span></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">客戶服務</h4>
                         <ul className="space-y-3 text-concrete-500">
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">飼養指南</button></li>
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">運送政策</button></li>
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">活體抵達保證</button></li>
-                            <li><button onClick={() => navigate('/admin')} className="hover:text-urban-green transition-colors">管理員登入 (模擬)</button></li>
+                            <li><span className="text-concrete-300 cursor-not-allowed">飼養指南 (維修中)</span></li>
+                            <li><span className="text-concrete-300 cursor-not-allowed">運送政策 (維修中)</span></li>
                         </ul>
                     </div>
                     <div>
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">品牌價值</h4>
                         <ul className="space-y-3 text-concrete-500">
-                            <li><button onClick={() => navigate('/about')} className="hover:text-concrete-900 transition-colors">品牌理念</button></li>
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">永續發展</button></li>
-                            <li><button onClick={handleConstruction} className="hover:text-concrete-900 transition-colors">隱私權條款</button></li>
+                            <li><span className="text-concrete-300 cursor-not-allowed">品牌理念 (維修中)</span></li>
                         </ul>
                     </div>
                     <div>
@@ -768,11 +762,11 @@ const AppContent: React.FC = () => {
                     </>
                 } />
                 <Route path="/shop" element={<ShopPage />} />
-                <Route path="/blog" element={<BlogPage />} />
-                <Route path="/about" element={<AboutPage />} />
+                <Route path="/blog" element={<MaintenanceView />} />
+                <Route path="/about" element={<MaintenanceView />} />
                 <Route path="/snake/:id" element={<SnakeDetailPage />} />
-                <Route path="/blog/:slug" element={<ArticleDetailPage />} />
-                <Route path="/admin" element={<AdminDashboard />} />
+                <Route path="/blog/:slug" element={<MaintenanceView />} />
+                <Route path="/admin" element={<MaintenanceView />} />
                 <Route path="/maintenance" element={<MaintenanceView />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
