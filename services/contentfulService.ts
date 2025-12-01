@@ -38,14 +38,6 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
   // Debug: Print all field keys to find the correct ID field name
   // console.log('Available fields for snake:', Object.keys(fields));
 
-  // Ensure arrays are arrays and not single strings
-  const ensureArray = (val: any): string[] => {
-    if (!val) return [];
-    if (Array.isArray(val)) return val;
-    if (typeof val === 'string') return [val];
-    return [];
-  };
-
   // Ensure images is an array of URLs
   const getImages = (val: any): string[] => {
     if (!val) return [];
