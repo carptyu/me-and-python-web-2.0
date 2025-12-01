@@ -1,4 +1,4 @@
-import { Snake, Article, Gender, Availability } from './types';
+import { Snake, Article } from './types';
 
 export const FEATURED_SNAKES: Snake[] = [];
 
