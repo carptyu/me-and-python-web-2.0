@@ -35,6 +35,9 @@ const getOriginalImageUrl = (url: string): string => {
 const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
   const fields = entry.fields;
 
+  // Debug: Print all field keys to find the correct ID field name
+  // console.log('Available fields for snake:', Object.keys(fields));
+
   // Ensure arrays are arrays and not single strings
   const ensureArray = (val: any): string[] => {
     if (!val) return [];
@@ -99,7 +102,7 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
     }
     // Use working placeholder
     console.warn(`No image found for ${fields.morph}, using placeholder`);
-    return 'https://placehold.co/800x800/e5e7eb/9ca3af?text=No+Image';
+    return '/placeholder.jpg';
   };
 
   // Get images array - note: Contentful field is named 'photo', not 'images'
@@ -125,6 +128,14 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
     return Availability.Available;
   };
 
+  // Map gender string to enum
+  const mapGender = (val: any): Gender => {
+    if (!val) return Gender.Male; // Default
+    const strVal = String(val).trim().toLowerCase();
+    if (strVal === 'female' || strVal === '母' || strVal === '女生') return Gender.Female;
+    return Gender.Male;
+  };
+
   // Get original image URLs (without compression parameters)
   const originalMainImage = getImageUrl();
   const originalGalleryImages = getImagesArray();
@@ -132,18 +143,30 @@ const mapContentfulSnakeToAppSnake = (entry: any): Snake => {
   // Ensure images array has at least the main image if empty
   const finalImages = originalGalleryImages.length > 0 ? originalGalleryImages : (originalMainImage ? [originalMainImage] : []);
 
+  // Try to find the ID field with case-insensitive search
+  // Contentful API usually returns fields as they are defined in the content model
+  let customId = fields.ID || fields.id || fields.Id || fields.iD;
+
+  // If not found directly, search through all keys case-insensitively
+  if (!customId) {
+    const idKey = Object.keys(fields).find(key => key.toLowerCase() === 'id');
+    if (idKey) {
+      customId = fields[idKey];
+    }
+  }
+
   return {
-    id: entry.sys.id,
+    id: customId ? String(customId) : 'No ID', // Use custom ID if found, else return 'No ID' (no system ID fallback)
     morph: fields.morph || 'Unknown',
-    scientificName: fields.scientificName || 'Python regius',
-    genetics: ensureArray(fields.genetics),
+    scientificName: 'Python regius', // Default value
+    genetics: [], // Empty array as requested
     price: Number(fields.price) || 0,
     imageUrl: getOptimizedImageUrl(originalMainImage),
     description: extractPlainText(fields.description) || '',
     hatchDate: fields.hatchDate || 'Unknown',
     weight: Number(fields.weight) || 0,
-    gender: (fields.gender as Gender) || Gender.Male,
-    diet: fields.diet || 'Unknown',
+    gender: mapGender(fields.gender),
+    diet: '未知', // Default value
     availability: mapAvailability(fields.availability),
     images: finalImages.map(getOptimizedImageUrl),
     originalImageUrl: getOriginalImageUrl(originalMainImage),

@@ -212,20 +212,42 @@ const AppContent: React.FC = () => {
                         </div>
                         <img src="https://picsum.photos/seed/support/600/800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-40 mix-blend-overlay" />
                     </div>
-                    <div className="bg-concrete-50 border border-concrete-200 rounded-2xl p-8 flex flex-col justify-between group cursor-pointer hover:border-urban-green/50 transition-colors" onClick={handleConstruction}>
-                        <div className="bg-white w-12 h-12 rounded-full flex items-center justify-center shadow-sm mb-4">
-                            <Instagram size={24} className="text-concrete-900" />
+                    <div className="bg-concrete-50 border border-concrete-200 rounded-2xl p-8 flex flex-col justify-between group hover:border-urban-green/50 transition-colors">
+                        <div className="flex gap-3 mb-4">
+                            <a
+                                href="https://www.instagram.com/meandpython?igsh=MTRmemlhaTA0ZWoxYg%3D%3D&utm_source=qr"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm hover:text-urban-green hover:shadow-md transition-all"
+                            >
+                                <Instagram size={20} className="text-concrete-900" />
+                            </a>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61558807599321"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm hover:text-urban-green hover:shadow-md transition-all"
+                            >
+                                <Facebook size={20} className="text-concrete-900" />
+                            </a>
+                            <a
+                                href="https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0stFjTg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-white w-10 h-10 rounded-full flex items-center justify-center shadow-sm hover:text-urban-green hover:shadow-md transition-all"
+                            >
+                                <LineIcon size={20} className="text-concrete-900" />
+                            </a>
                         </div>
                         <div>
                             <h4 className="text-xl font-bold text-concrete-900">社群</h4>
-                            <p className="text-concrete-500 mt-1 text-sm">加入 50k+ 都市飼養者行列。</p>
                         </div>
                     </div>
                     <div className="lg:col-span-2 bg-urban-green/10 border border-urban-green/20 rounded-2xl overflow-hidden relative flex items-center justify-between p-8 md:p-10 group cursor-pointer hover:bg-urban-green/15 transition-colors" onClick={() => navigate('/shop')}>
                         <div className="z-10 max-w-md">
-                            <h4 className="text-2xl md:text-3xl font-bold text-urban-green mb-2">本週新進</h4>
-                            <p className="text-concrete-600">探索最新孵化的球蟒，尋找您的夢幻品系。</p>
-                            <span className="inline-block mt-4 text-concrete-900 font-bold text-sm border-b border-concrete-900 pb-0.5">立即選購</span>
+                            <h4 className="text-2xl md:text-3xl font-bold text-urban-green mb-2">最新孵化</h4>
+                            <p className="text-concrete-600">獨特基因組合，尋找您的夢幻品系。</p>
+                            <span className="inline-block mt-4 text-concrete-900 font-bold text-sm border-b border-concrete-900 pb-0.5">探索更多</span>
                         </div>
                         <div className="absolute right-0 top-0 h-full w-1/2">
                             <img src="https://picsum.photos/seed/newarrivals/600/400" className="h-full w-full object-cover opacity-100 mask-image-gradient-left" style={{ maskImage: 'linear-gradient(to left, black 0%, transparent 100%)', WebkitMaskImage: 'linear-gradient(to left, black 0%, transparent 100%)' }} />
