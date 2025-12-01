@@ -484,11 +484,11 @@ const AppContent: React.FC = () => {
         return (
             <div className="bg-white min-h-screen pt-24 pb-20 px-4">
                 <div className="max-w-7xl mx-auto">
-                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-8 group">
+                    <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-6 group">
                         <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回列表
                     </button>
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-                        <div className="space-y-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                        <div className="lg:col-span-5 space-y-4">
                             <div
                                 className="aspect-square bg-concrete-100 rounded-2xl overflow-hidden cursor-zoom-in relative group"
                                 onClick={() => openLightbox(snake.images || [], snake.originalImages || [], activeImageIndex)}
@@ -517,7 +517,7 @@ const AppContent: React.FC = () => {
                                     <ZoomIn className="text-white drop-shadow-md" size={48} />
                                 </div>
                             </div>
-                            <div className="grid grid-cols-4 gap-4">
+                            <div className="grid grid-cols-4 gap-3">
                                 {images.map((img, i) => (
                                     <div
                                         key={i}
@@ -530,8 +530,8 @@ const AppContent: React.FC = () => {
                                 ))}
                             </div>
                         </div>
-                        <div>
-                            <div className="flex items-center gap-4 mb-6">
+                        <div className="lg:col-span-7">
+                            <div className="flex items-center gap-4 mb-4">
                                 <h1 className="text-2xl font-bold text-concrete-900 flex-1 leading-tight flex items-center gap-3">
                                     <span className={`text-lg font-bold tracking-wider px-3 py-1 rounded-full backdrop-blur-md shadow-sm flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${snake.gender === 'Male'
                                         ? 'bg-blue-50 text-blue-600'
@@ -552,30 +552,32 @@ const AppContent: React.FC = () => {
                                                 '開放預購'}
                                 </span>
                             </div>
-                            <p className="text-3xl font-mono text-concrete-600 mb-8">${snake.price.toLocaleString()}</p>
-                            <p className="text-concrete-500 leading-relaxed mb-8 text-lg">
+                            <p className="text-3xl font-mono text-concrete-600 mb-6">${snake.price.toLocaleString()}</p>
+                            <p className="text-concrete-500 leading-relaxed mb-6 text-lg">
                                 {snake.description}
                             </p>
 
-                            <div className="py-6 border-b border-concrete-100 space-y-4 bg-concrete-50/50 rounded-xl px-6 mt-6">
-                                <h4 className="text-concrete-900 font-bold text-sm uppercase tracking-wide mb-4">詳細數據</h4>
-                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                    <span className="text-concrete-400">編號</span>
-                                    <span className="text-concrete-900 font-mono">{snake.id}</span>
-                                </div>
-                                <div className="flex justify-between text-sm border-b border-concrete-200/50 pb-2">
-                                    <span className="text-concrete-400">出生日期</span>
-                                    <span className="text-concrete-900">{snake.hatchDate}</span>
-                                </div>
-                                <div className="flex justify-between text-sm pt-2">
-                                    <span className="text-concrete-400">體重</span>
-                                    <span className="text-concrete-900">{snake.weight}g</span>
+                            <div className="py-4 border-b border-concrete-100 bg-concrete-50/50 rounded-xl px-5 mt-4">
+                                <h4 className="text-concrete-900 font-bold text-sm uppercase tracking-wide mb-3">詳細數據</h4>
+                                <div className="grid grid-cols-3 gap-4">
+                                    <div>
+                                        <span className="block text-xs text-concrete-400 mb-1">編號</span>
+                                        <span className="text-sm text-concrete-900 font-mono block truncate" title={snake.id}>{snake.id}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-xs text-concrete-400 mb-1">出生日期</span>
+                                        <span className="text-sm text-concrete-900 block">{snake.hatchDate}</span>
+                                    </div>
+                                    <div>
+                                        <span className="block text-xs text-concrete-400 mb-1">體重</span>
+                                        <span className="text-sm text-concrete-900 block">{snake.weight}g</span>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="mt-10 flex gap-4">
-                                <div className="bg-concrete-50 border border-concrete-200 rounded-xl p-6 text-center w-full">
-                                    <div className="flex items-center justify-center gap-2 text-concrete-500 text-xs mb-4">
+                            <div className="mt-6 flex gap-4">
+                                <div className="bg-concrete-50 border border-concrete-200 rounded-xl p-5 text-center w-full">
+                                    <div className="flex items-center justify-center gap-2 text-concrete-500 text-xs mb-3">
                                         <MapPin size={14} />
                                         <span>提供全台安全寄送服務</span>
                                     </div>
@@ -589,7 +591,7 @@ const AppContent: React.FC = () => {
                                                 alert('複製失敗，請手動複製：\n' + inquiryText);
                                             });
                                         }}
-                                        className="w-full bg-concrete-900 text-white font-bold py-4 rounded-lg hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl"
+                                        className="w-full bg-concrete-900 text-white font-bold py-3 rounded-lg hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl"
                                     >
                                         立即詢問
                                     </button>
