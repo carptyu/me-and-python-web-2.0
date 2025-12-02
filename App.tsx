@@ -200,14 +200,14 @@ const AppContent: React.FC = () => {
                     <div className="md:col-span-2 lg:col-span-2 bg-concrete-100 rounded-2xl overflow-hidden h-[300px] md:h-[500px] relative group" onClick={handleConstruction}>
                         <div className="absolute inset-0 z-10 p-8 md:p-10 flex flex-col justify-end bg-gradient-to-t from-concrete-900/80 to-transparent cursor-pointer">
                             <p className="text-white/80 uppercase text-xs font-bold tracking-widest mb-2">GENETICS</p>
-                            <h3 className="text-2xl md:text-3xl font-bold text-white">基因美學</h3>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white">球蟒基因指南</h3>
                         </div>
                         <img src="https://picsum.photos/seed/genetics1/1200/800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 grayscale-[30%]" />
                     </div>
                     <div className="bg-concrete-800 rounded-2xl overflow-hidden h-[300px] md:h-[500px] relative group">
                         <div className="absolute inset-0 z-10 p-8 md:p-10 flex flex-col justify-start items-center text-center">
                             <p className="text-white/80 uppercase text-xs font-bold tracking-widest mt-4 mb-2">SUPPORT</p>
-                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">專業諮詢 全程相伴</h3>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white mb-2">專業諮詢</h3>
 
                         </div>
                         <img src="https://picsum.photos/seed/support/600/800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-40 mix-blend-overlay" />
@@ -264,7 +264,6 @@ const AppContent: React.FC = () => {
                 <div className="flex flex-col md:flex-row justify-between items-end mb-10 border-b border-concrete-200 pb-8">
                     <div>
                         <h1 className="text-4xl md:text-5xl font-bold text-concrete-900 mb-3">尋找您的夥伴</h1>
-                        <p className="text-lg text-concrete-500">是寵物 是家人 更是美感本身</p>
                     </div>
                     <div className="mt-6 md:mt-0 flex flex-col gap-4 w-full md:w-auto">
                         <div className="flex items-center gap-2 order-2 md:order-1">
