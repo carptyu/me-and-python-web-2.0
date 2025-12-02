@@ -166,7 +166,7 @@ const AppContent: React.FC = () => {
                     <span className="text-concrete-400 block mt-2">迷蟒陪伴</span>
                 </h1>
                 <p className="text-lg md:text-2xl text-concrete-500 font-light max-w-2xl mx-auto mb-10">
-                    頂尖基因藝術，掌心的靜謐靈魂
+                    共同發掘 球蟒的無限可能
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-6 sm:px-0">
                     <button
@@ -194,13 +194,13 @@ const AppContent: React.FC = () => {
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="text-center mb-16">
                     <h2 className="text-3xl md:text-5xl font-bold text-concrete-900 mb-4">不只是爬蟲</h2>
-                    <p className="text-concrete-500 text-lg">更是現代居家美學的一部分</p>
+                    <p className="text-concrete-500 text-lg">細心呵護 體現基因的藝術</p>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                     <div className="md:col-span-2 lg:col-span-2 bg-concrete-100 rounded-2xl overflow-hidden h-[300px] md:h-[500px] relative group" onClick={handleConstruction}>
                         <div className="absolute inset-0 z-10 p-8 md:p-10 flex flex-col justify-end bg-gradient-to-t from-concrete-900/80 to-transparent cursor-pointer">
                             <p className="text-white/80 uppercase text-xs font-bold tracking-widest mb-2">GENETICS</p>
-                            <h3 className="text-2xl md:text-3xl font-bold text-white">極致的基因美學。</h3>
+                            <h3 className="text-2xl md:text-3xl font-bold text-white">基因美學</h3>
                         </div>
                         <img src="https://picsum.photos/seed/genetics1/1200/800" className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105 opacity-90 grayscale-[30%]" />
                     </div>
@@ -246,7 +246,7 @@ const AppContent: React.FC = () => {
                     <div className="lg:col-span-2 bg-urban-green/10 border border-urban-green/20 rounded-2xl overflow-hidden relative flex items-center justify-between p-8 md:p-10 group cursor-pointer hover:bg-urban-green/15 transition-colors" onClick={() => navigate('/shop')}>
                         <div className="z-10 max-w-md">
                             <h4 className="text-2xl md:text-3xl font-bold text-urban-green mb-2">最新孵化</h4>
-                            <p className="text-concrete-600">獨特基因組合，尋找您的夢幻品系。</p>
+                            <p className="text-concrete-600">獨特基因組合 尋找您的夢幻品系</p>
                             <span className="inline-block mt-4 text-concrete-900 font-bold text-sm border-b border-concrete-900 pb-0.5">探索更多</span>
                         </div>
                         <div className="absolute right-0 top-0 h-full w-1/2">
