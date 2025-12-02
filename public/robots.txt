@@ -1,0 +1,11 @@
+# 迷蟒 Me&Python - 完全開放給搜尋引擎
+# 允許所有爬蟲爬取所有內容
+
+User-agent: *
+Allow: /
+
+# Sitemap 位置
+Sitemap: https://me-and-python-web-20.vercel.app/sitemap.xml
+
+# 爬取延遲 (禮貌性設定,避免伺服器負擔過重)
+Crawl-delay: 1
