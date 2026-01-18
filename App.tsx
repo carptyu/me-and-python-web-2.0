@@ -159,6 +159,7 @@ const AppContent: React.FC = () => {
     );
 
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+    const [showSocialChoice, setShowSocialChoice] = useState(false);
     const [vendors, setVendors] = useState<Vendor[]>([]);
     const [isLoadingVendors, setIsLoadingVendors] = useState(true);
 
@@ -176,9 +177,6 @@ const AppContent: React.FC = () => {
     const ImportService = () => (
         <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
             <div className="max-w-4xl mx-auto px-6">
-                <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-6 group">
-                    <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回
-                </button>
                 <h1 className="text-4xl font-bold text-concrete-900 mb-8">進口代購服務</h1>
                 <div className="bg-white p-8 rounded-2xl shadow-sm border border-concrete-200">
                     {/* Service Description */}
@@ -212,7 +210,7 @@ const AppContent: React.FC = () => {
                                     <li className="flex gap-4">
                                         <span className="flex-shrink-0 w-8 h-8 rounded-full bg-urban-green text-white flex items-center justify-center font-bold text-sm">1</span>
                                         <div>
-                                            <p className="font-bold text-concrete-900">加入 Line 社群</p>
+                                            <p className="font-bold text-concrete-900">加入 <a href="https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0stFjTg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default" target="_blank" rel="noopener noreferrer" className="bg-urban-green/20 text-urban-green font-bold px-2 py-0.5 rounded hover:bg-urban-green/30 transition-colors">Line 社群</a></p>
                                             <p className="text-concrete-500 text-sm">獲取最新代購資訊與優惠通知</p>
                                         </div>
                                     </li>
@@ -226,7 +224,7 @@ const AppContent: React.FC = () => {
                                     <li className="flex gap-4">
                                         <span className="flex-shrink-0 w-8 h-8 rounded-full bg-urban-green text-white flex items-center justify-center font-bold text-sm">3</span>
                                         <div>
-                                            <p className="font-bold text-concrete-900">傳送連結至粉絲專頁</p>
+                                            <p className="font-bold text-concrete-900">傳送連結至<button onClick={() => setShowSocialChoice(true)} className="bg-urban-green/20 text-urban-green font-bold px-2 py-0.5 rounded hover:bg-urban-green/30 transition-colors">粉絲專頁</button></p>
                                             <p className="text-concrete-500 text-sm">我們會與您確認價格與細節</p>
                                         </div>
                                     </li>
@@ -288,17 +286,17 @@ const AppContent: React.FC = () => {
                                                         {vendor.name}
                                                     </a>
                                                 </td>
-                                                <td className="p-4">
+                                                <td className="p-2 md:p-4 text-right md:text-left">
                                                     {(vendor.appendixFiles && vendor.appendixFiles.length > 0) || vendor.appendixLabel ? (
                                                         <button
                                                             onClick={() => navigate(`/vendor/${vendor.id}/appendix`)}
-                                                            className="inline-flex items-center gap-1.5 px-3 py-1 bg-urban-green/10 text-urban-green text-sm font-medium rounded-full hover:bg-urban-green/20 transition-colors"
+                                                            className="inline-flex items-center gap-1 px-2 py-1 md:px-3 md:py-1.5 bg-urban-green text-white text-xs md:text-sm font-medium rounded-lg hover:bg-urban-green/90 transition-colors whitespace-nowrap"
                                                         >
-                                                            <FileText size={14} />
-                                                            <span>有附錄</span>
+                                                            <FileText size={12} className="md:w-[14px] md:h-[14px]" />
+                                                            <span>查看</span>
                                                         </button>
                                                     ) : (
-                                                        <span className="text-concrete-400 italic">—</span>
+                                                        <span className="text-concrete-300">—</span>
                                                     )}
                                                 </td>
                                             </tr>
@@ -310,6 +308,41 @@ const AppContent: React.FC = () => {
                     </div>
                 </div>
             </div>
+
+            {/* Social Media Choice Modal */}
+            {showSocialChoice && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4" onClick={() => setShowSocialChoice(false)}>
+                    <div className="bg-white rounded-2xl p-6 max-w-xs w-full shadow-2xl relative animate-slide-up" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            onClick={() => setShowSocialChoice(false)}
+                            className="absolute top-3 right-3 text-concrete-400 hover:text-concrete-900 bg-concrete-50 p-1 rounded-full"
+                        >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                        </button>
+                        <h3 className="text-lg font-bold text-concrete-900 mb-4 text-center">選擇聯絡方式</h3>
+                        <div className="flex flex-col gap-3">
+                            <a
+                                href="https://www.instagram.com/meandpython?igsh=MTRmemlhaTA0ZWoxYg%3D%3D&utm_source=qr"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 p-4 rounded-xl bg-gradient-to-r from-purple-500 to-pink-500 text-white hover:opacity-90 transition-opacity"
+                            >
+                                <Instagram size={24} />
+                                <span className="font-bold">Instagram</span>
+                            </a>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61558807599321"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-3 p-4 rounded-xl bg-blue-600 text-white hover:opacity-90 transition-opacity"
+                            >
+                                <Facebook size={24} />
+                                <span className="font-bold">Facebook</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 
@@ -317,6 +350,11 @@ const AppContent: React.FC = () => {
     const VendorAppendixPage = () => {
         const { id } = useParams<{ id: string }>();
         const vendor = vendors.find(v => v.id === id);
+
+        // Scroll to top when entering this page
+        useEffect(() => {
+            window.scrollTo(0, 0);
+        }, [id]);
 
         if (isLoadingVendors) {
             return (
@@ -350,10 +388,6 @@ const AppContent: React.FC = () => {
         return (
             <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
                 <div className="max-w-4xl mx-auto px-6">
-                    <button onClick={() => navigate('/import-service')} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-6 group">
-                        <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回廠家列表
-                    </button>
-
                     <div className="bg-white p-8 rounded-2xl shadow-sm border border-concrete-200">
                         <div className="flex items-center justify-between mb-6">
                             <h1 className="text-2xl font-bold text-concrete-900">{vendor.name} - 附錄</h1>
