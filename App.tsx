@@ -4,9 +4,9 @@ import Navbar from './components/Navbar';
 import SnakeCard from './components/SnakeCard';
 
 import { FEATURED_SNAKES } from './constants';
-import { Snake, Availability } from './types';
-import { ChevronRight, ChevronLeft, Instagram, Facebook, MapPin, Construction, ArrowLeft, ZoomIn, Loader2 } from 'lucide-react';
-import { fetchSnakesFromContentful } from './services/contentfulService';
+import { Snake, Availability, Vendor } from './types';
+import { ChevronRight, ChevronLeft, Instagram, Facebook, MapPin, Construction, ArrowLeft, ZoomIn, Loader2, FileText } from 'lucide-react';
+import { fetchSnakesFromContentful, fetchVendorsFromContentful } from './services/contentfulService';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react"
 import Lightbox from './components/Lightbox';
@@ -158,6 +158,21 @@ const AppContent: React.FC = () => {
         </div>
     );
 
+    const [isTutorialOpen, setIsTutorialOpen] = useState(false);
+    const [vendors, setVendors] = useState<Vendor[]>([]);
+    const [isLoadingVendors, setIsLoadingVendors] = useState(true);
+
+    // Fetch vendors from Contentful
+    useEffect(() => {
+        const loadVendors = async () => {
+            setIsLoadingVendors(true);
+            const cmsVendors = await fetchVendorsFromContentful();
+            setVendors(cmsVendors);
+            setIsLoadingVendors(false);
+        };
+        loadVendors();
+    }, []);
+
     const ImportService = () => (
         <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
             <div className="max-w-4xl mx-auto px-6">
@@ -165,24 +180,242 @@ const AppContent: React.FC = () => {
                     <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回
                 </button>
                 <h1 className="text-4xl font-bold text-concrete-900 mb-8">進口代購服務</h1>
-                <div className="bg-white p-8 rounded-2xl shadow-sm border border-concrete-200 min-h-[400px]">
-                    <p className="text-concrete-600 leading-relaxed mb-8 text-lg">
-                        我們提供專業的球蟒進口代購服務。如果您有尋找特定的品系或國外繁殖場的個體，歡迎聯繫我們。
-                    </p>
-
-                    <div className="p-12 bg-concrete-50 rounded-xl border-2 border-dashed border-concrete-300 flex flex-col items-center justify-center text-concrete-400 gap-4">
-                        <div className="bg-white p-4 rounded-full shadow-sm">
-                            <Construction size={32} />
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-concrete-200">
+                    {/* Service Description */}
+                    <div className="mb-8">
+                        <h2 className="text-2xl font-bold text-concrete-900 mb-4">專業美國球蟒代購</h2>
+                        <div className="bg-urban-green/10 border border-urban-green/20 rounded-xl p-6 mb-6">
+                            <p className="text-concrete-700 leading-relaxed text-lg mb-4">
+                                即日起至 <span className="font-bold text-urban-green">2026/2/20</span> 截止接單
+                            </p>
+                            <p className="text-concrete-600 leading-relaxed">
+                                價格計算方式：<span className="font-mono font-bold">美元 × 45 = 入手價</span>
+                            </p>
+                            <p className="text-concrete-500 text-sm mt-2">
+                                預計 2026 年 3 月中旬到達台灣
+                            </p>
                         </div>
-                        <div className="text-center">
-                            <span className="block mb-1 text-xl font-bold text-concrete-600">服務內容建置中</span>
-                            <span className="text-sm">More information coming soon...</span>
+                    </div>
+
+                    {/* Collapsible Tutorial Section */}
+                    <div className="mb-8">
+                        <button
+                            onClick={() => setIsTutorialOpen(!isTutorialOpen)}
+                            className="w-full flex items-center justify-between p-4 bg-concrete-50 rounded-xl hover:bg-concrete-100 transition-colors border border-concrete-200"
+                        >
+                            <span className="text-lg font-bold text-concrete-900">📖 新手購買教學</span>
+                            <ChevronRight className={`text-concrete-500 transition-transform duration-300 ${isTutorialOpen ? 'rotate-90' : ''}`} size={20} />
+                        </button>
+                        <div className={`overflow-hidden transition-all duration-300 ease-in-out ${isTutorialOpen ? 'max-h-[500px] opacity-100 mt-4' : 'max-h-0 opacity-0'}`}>
+                            <div className="bg-concrete-50 rounded-xl p-6 border border-concrete-200">
+                                <ol className="space-y-4">
+                                    <li className="flex gap-4">
+                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-urban-green text-white flex items-center justify-center font-bold text-sm">1</span>
+                                        <div>
+                                            <p className="font-bold text-concrete-900">加入 Line 社群</p>
+                                            <p className="text-concrete-500 text-sm">獲取最新代購資訊與優惠通知</p>
+                                        </div>
+                                    </li>
+                                    <li className="flex gap-4">
+                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-urban-green text-white flex items-center justify-center font-bold text-sm">2</span>
+                                        <div>
+                                            <p className="font-bold text-concrete-900">瀏覽合作廠家</p>
+                                            <p className="text-concrete-500 text-sm">從下方廠家列表中挑選心儀的球蟒</p>
+                                        </div>
+                                    </li>
+                                    <li className="flex gap-4">
+                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-urban-green text-white flex items-center justify-center font-bold text-sm">3</span>
+                                        <div>
+                                            <p className="font-bold text-concrete-900">傳送連結至粉絲專頁</p>
+                                            <p className="text-concrete-500 text-sm">我們會與您確認價格與細節</p>
+                                        </div>
+                                    </li>
+                                    <li className="flex gap-4">
+                                        <span className="flex-shrink-0 w-8 h-8 rounded-full bg-urban-green text-white flex items-center justify-center font-bold text-sm">4</span>
+                                        <div>
+                                            <p className="font-bold text-concrete-900">完成匯款後下訂</p>
+                                            <p className="text-concrete-500 text-sm">全款匯入後，我們將與美國賣家進行溝通下訂</p>
+                                        </div>
+                                    </li>
+                                </ol>
+                                <div className="mt-6 p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                                    <p className="text-yellow-800 text-sm flex items-center gap-2">
+                                        <span className="text-lg">⭐</span>
+                                        <span>部分賣家會以提供清單的形式販售，請留意廠家附錄欄位的清單資訊</span>
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Vendor List */}
+                    <div>
+                        <h3 className="text-xl font-bold text-concrete-900 mb-4">🐍 合作廠家列表</h3>
+                        <div className="overflow-x-auto">
+                            <table className="w-full border-collapse">
+                                <thead>
+                                    <tr className="bg-concrete-100">
+                                        <th className="text-left p-4 text-concrete-700 font-bold rounded-tl-lg">廠家名稱</th>
+                                        <th className="text-left p-4 text-concrete-700 font-bold rounded-tr-lg">附錄</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {isLoadingVendors ? (
+                                        <tr>
+                                            <td colSpan={2} className="p-8 text-center">
+                                                <div className="flex items-center justify-center gap-2 text-concrete-400">
+                                                    <Loader2 className="animate-spin" size={20} />
+                                                    <span>載入廠家資料中...</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ) : vendors.length === 0 ? (
+                                        <tr>
+                                            <td colSpan={2} className="p-8 text-center text-concrete-400">
+                                                目前沒有廠家資料
+                                            </td>
+                                        </tr>
+                                    ) : (
+                                        vendors.map((vendor, index) => (
+                                            <tr key={index} className="border-b border-concrete-100 hover:bg-concrete-50 transition-colors">
+                                                <td className="p-4">
+                                                    <a
+                                                        href={vendor.url}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="text-urban-green hover:text-urban-green/80 font-medium hover:underline transition-colors"
+                                                    >
+                                                        {vendor.name}
+                                                    </a>
+                                                </td>
+                                                <td className="p-4">
+                                                    {(vendor.appendixFiles && vendor.appendixFiles.length > 0) || vendor.appendixLabel ? (
+                                                        <button
+                                                            onClick={() => navigate(`/vendor/${vendor.id}/appendix`)}
+                                                            className="inline-flex items-center gap-1.5 px-3 py-1 bg-urban-green/10 text-urban-green text-sm font-medium rounded-full hover:bg-urban-green/20 transition-colors"
+                                                        >
+                                                            <FileText size={14} />
+                                                            <span>有附錄</span>
+                                                        </button>
+                                                    ) : (
+                                                        <span className="text-concrete-400 italic">—</span>
+                                                    )}
+                                                </td>
+                                            </tr>
+                                        ))
+                                    )}
+                                </tbody>
+                            </table>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
     );
+
+    // Vendor Appendix Detail Page
+    const VendorAppendixPage = () => {
+        const { id } = useParams<{ id: string }>();
+        const vendor = vendors.find(v => v.id === id);
+
+        if (isLoadingVendors) {
+            return (
+                <div className="pt-24 pb-20 bg-concrete-50 min-h-screen flex items-center justify-center">
+                    <div className="flex items-center gap-2 text-concrete-400">
+                        <Loader2 className="animate-spin" size={24} />
+                        <span>載入中...</span>
+                    </div>
+                </div>
+            );
+        }
+
+        if (!vendor) {
+            return (
+                <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
+                    <div className="max-w-4xl mx-auto px-6 text-center">
+                        <h1 className="text-2xl font-bold text-concrete-900 mb-4">找不到此廠家</h1>
+                        <button
+                            onClick={() => navigate('/import-service')}
+                            className="bg-concrete-900 text-white px-6 py-3 rounded-lg hover:bg-concrete-800 transition-colors"
+                        >
+                            返回廠家列表
+                        </button>
+                    </div>
+                </div>
+            );
+        }
+
+        const hasAppendix = (vendor.appendixFiles && vendor.appendixFiles.length > 0) || vendor.appendixLabel;
+
+        return (
+            <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
+                <div className="max-w-4xl mx-auto px-6">
+                    <button onClick={() => navigate('/import-service')} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-6 group">
+                        <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回廠家列表
+                    </button>
+
+                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-concrete-200">
+                        <div className="flex items-center justify-between mb-6">
+                            <h1 className="text-2xl font-bold text-concrete-900">{vendor.name} - 附錄</h1>
+                            <a
+                                href={vendor.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-urban-green hover:text-urban-green/80 font-medium hover:underline transition-colors text-sm"
+                            >
+                                前往 MorphMarket →
+                            </a>
+                        </div>
+
+                        {!hasAppendix ? (
+                            <div className="p-12 bg-concrete-50 rounded-xl border-2 border-dashed border-concrete-300 flex flex-col items-center justify-center text-concrete-400 gap-4">
+                                <FileText size={32} />
+                                <p>此廠家尚無附錄資料</p>
+                            </div>
+                        ) : (
+                            <div className="space-y-6">
+                                {/* Appendix Label/Description */}
+                                {vendor.appendixLabel && (
+                                    <div className="bg-concrete-50 rounded-xl p-6 border border-concrete-200">
+                                        <h3 className="text-lg font-bold text-concrete-900 mb-3">說明</h3>
+                                        <p className="text-concrete-600 whitespace-pre-wrap leading-relaxed">{vendor.appendixLabel}</p>
+                                    </div>
+                                )}
+
+                                {/* Appendix Files/Images */}
+                                {vendor.appendixFiles && vendor.appendixFiles.length > 0 && (
+                                    <div>
+                                        <h3 className="text-lg font-bold text-concrete-900 mb-4">附件 ({vendor.appendixFiles.length})</h3>
+                                        <div className="space-y-4">
+                                            {vendor.appendixFiles.map((file, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="relative group cursor-pointer rounded-xl overflow-hidden border border-concrete-200 hover:border-urban-green/50 transition-colors bg-concrete-50"
+                                                    onClick={() => openLightbox(vendor.appendixFiles || [], [], index)}
+                                                >
+                                                    <img
+                                                        src={file}
+                                                        alt={`${vendor.name} 附錄 ${index + 1}`}
+                                                        className="w-full h-auto object-contain group-hover:scale-[1.02] transition-transform duration-300"
+                                                    />
+                                                    <div className="absolute inset-0 bg-black/0 group-hover:bg-black/5 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+                                                        <div className="bg-white/90 backdrop-blur-sm px-4 py-2 rounded-full flex items-center gap-2 shadow-lg">
+                                                            <ZoomIn className="text-concrete-900" size={18} />
+                                                            <span className="text-concrete-900 text-sm font-medium">點擊放大</span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    };
 
     const Hero = () => (
         <div className="relative w-full min-h-screen flex flex-col items-center justify-center pt-20 pb-10 overflow-hidden bg-concrete-100">
@@ -750,6 +983,7 @@ const AppContent: React.FC = () => {
                 <Route path="/admin" element={<MaintenanceView />} />
                 <Route path="/maintenance" element={<MaintenanceView />} />
                 <Route path="/import-service" element={<ImportService />} />
+                <Route path="/vendor/:id/appendix" element={<VendorAppendixPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
 

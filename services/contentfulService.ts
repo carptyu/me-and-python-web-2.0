@@ -192,3 +192,73 @@ export const fetchSnakesFromContentful = async (): Promise<Snake[]> => {
     return [];
   }
 };
+
+// Vendor type for import service
+import { Vendor } from '../types';
+
+// Map Contentful vendor entry to Vendor type
+const mapContentfulVendorToAppVendor = (entry: any): Vendor => {
+  const fields = entry.fields;
+
+  // Get appendix files URLs
+  const getAppendixFiles = (): string[] => {
+    if (!fields.appendixFiles) return [];
+    if (Array.isArray(fields.appendixFiles)) {
+      return fields.appendixFiles.map((file: any) => {
+        if (file?.fields?.file?.url) {
+          return `https:${file.fields.file.url}`;
+        }
+        return '';
+      }).filter(Boolean);
+    }
+    return [];
+  };
+
+  // Extract plain text from Rich Text or Long Text
+  const getAppendixLabel = (): string => {
+    if (!fields.appendixLabel) return '';
+    if (typeof fields.appendixLabel === 'string') return fields.appendixLabel;
+    // Handle Rich Text
+    if (fields.appendixLabel.nodeType && fields.appendixLabel.content) {
+      const extractText = (node: any): string => {
+        if (!node) return '';
+        if (node.nodeType === 'text') return node.value || '';
+        if (node.content && Array.isArray(node.content)) {
+          return node.content.map(extractText).join('');
+        }
+        return '';
+      };
+      return extractText(fields.appendixLabel);
+    }
+    return String(fields.appendixLabel);
+  };
+
+  return {
+    id: entry.sys.id, // Contentful entry ID for routing
+    name: fields.name || 'Unknown Vendor',
+    url: fields.url || '#',
+    appendixFiles: getAppendixFiles(),
+    appendixLabel: getAppendixLabel(),
+  };
+};
+
+export const fetchVendorsFromContentful = async (): Promise<Vendor[]> => {
+  if (!client) {
+    console.warn('Contentful client not initialized');
+    return [];
+  }
+
+  try {
+    const response = await client.getEntries({
+      content_type: 'vendor',
+      order: 'sys.createdAt'
+    });
+
+    console.log("Fetched vendors from Contentful:", response.items);
+
+    return response.items.map(mapContentfulVendorToAppVendor);
+  } catch (error) {
+    console.error('Error fetching vendors from Contentful:', error);
+    return [];
+  }
+};

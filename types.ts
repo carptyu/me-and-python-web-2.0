@@ -48,3 +48,11 @@ export interface ChatMessage {
   text: string;
   isError?: boolean;
 }
+
+export interface Vendor {
+  id: string; // Contentful entry ID for routing
+  name: string;
+  url: string;
+  appendixFiles?: string[]; // URLs to appendix files/images
+  appendixLabel?: string; // Optional description for appendix
+}
