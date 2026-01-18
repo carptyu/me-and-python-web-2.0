@@ -387,8 +387,8 @@ const AppContent: React.FC = () => {
 
         return (
             <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
-                <div className="max-w-4xl mx-auto px-6">
-                    <div className="bg-white p-8 rounded-2xl shadow-sm border border-concrete-200">
+                <div className="max-w-4xl mx-auto px-3 md:px-6">
+                    <div className="bg-white p-4 md:p-8 rounded-2xl shadow-sm border border-concrete-200">
                         <div className="flex items-center justify-between mb-6">
                             <h1 className="text-2xl font-bold text-concrete-900">{vendor.name} - 附錄</h1>
                             <a
