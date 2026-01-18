@@ -72,13 +72,22 @@ const Navbar: React.FC = () => {
 
                             {/* Logo / Home */}
                             <Link to="/" className="flex-shrink-0 cursor-pointer group">
-                                <div className="flex flex-col leading-none">
-                                    <span className={`text-xl md:text-2xl font-bold tracking-widest transition-colors ${scrolled || isOpen ? 'text-concrete-900' : 'text-concrete-900 md:text-concrete-800'}`}>
-                                        迷蟒
-                                    </span>
-                                    <span className="text-[10px] font-bold tracking-[0.2em] text-urban-green group-hover:tracking-[0.25em] transition-all duration-500">
-                                        ME&PYTHON
-                                    </span>
+                                <div className="flex items-center gap-2 md:gap-3">
+                                    {/* Logo Image */}
+                                    <img
+                                        src="/logo.svg"
+                                        alt="Me&Python Logo"
+                                        className="h-8 md:h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+                                    />
+                                    {/* Brand Text */}
+                                    <div className="flex flex-col leading-none">
+                                        <span className={`text-xl md:text-2xl font-bold tracking-widest transition-colors ${scrolled || isOpen ? 'text-concrete-900' : 'text-concrete-900 md:text-concrete-800'}`}>
+                                            迷蟒
+                                        </span>
+                                        <span className="text-[10px] font-bold tracking-[0.2em] text-urban-green group-hover:tracking-[0.25em] transition-all duration-500">
+                                            ME&PYTHON
+                                        </span>
+                                    </div>
                                 </div>
                             </Link>
                         </div>

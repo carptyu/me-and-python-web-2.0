@@ -88,6 +88,7 @@ const AppContent: React.FC = () => {
 
     // Inquiry Alert State
     const [showInquiryAlert, setShowInquiryAlert] = useState(false);
+    const [showHeroSocial, setShowHeroSocial] = useState(false);
 
     // --- Lightbox Logic ---
     const openLightbox = (images: string[], originalImages: string[] = [], index: number = 0) => {
@@ -157,6 +158,32 @@ const AppContent: React.FC = () => {
         </div>
     );
 
+    const ImportService = () => (
+        <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
+            <div className="max-w-4xl mx-auto px-6">
+                <button onClick={() => navigate(-1)} className="flex items-center gap-2 text-concrete-500 hover:text-concrete-900 transition-colors mb-6 group">
+                    <ChevronRight className="rotate-180 group-hover:-translate-x-1 transition-transform" size={18} /> 返回
+                </button>
+                <h1 className="text-4xl font-bold text-concrete-900 mb-8">進口代購服務</h1>
+                <div className="bg-white p-8 rounded-2xl shadow-sm border border-concrete-200 min-h-[400px]">
+                    <p className="text-concrete-600 leading-relaxed mb-8 text-lg">
+                        我們提供專業的球蟒進口代購服務。如果您有尋找特定的品系或國外繁殖場的個體，歡迎聯繫我們。
+                    </p>
+
+                    <div className="p-12 bg-concrete-50 rounded-xl border-2 border-dashed border-concrete-300 flex flex-col items-center justify-center text-concrete-400 gap-4">
+                        <div className="bg-white p-4 rounded-full shadow-sm">
+                            <Construction size={32} />
+                        </div>
+                        <div className="text-center">
+                            <span className="block mb-1 text-xl font-bold text-concrete-600">服務內容建置中</span>
+                            <span className="text-sm">More information coming soon...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     const Hero = () => (
         <div className="relative w-full min-h-screen flex flex-col items-center justify-center pt-20 pb-10 overflow-hidden bg-concrete-100">
             <div className="text-center px-6 max-w-4xl mx-auto z-10 animate-slide-up opacity-0 flex flex-col items-center" style={{ animationDelay: '0.1s' }}>
@@ -176,10 +203,16 @@ const AppContent: React.FC = () => {
                         邂逅夥伴
                     </button>
                     <button
-                        onClick={() => navigate('/about')}
+                        onClick={() => setShowHeroSocial(true)}
                         className="bg-white text-concrete-900 border border-concrete-200 rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-50 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
                     >
-                        了解更多 <ChevronRight size={14} />
+                        官方社群
+                    </button>
+                    <button
+                        onClick={() => navigate('/import-service')}
+                        className="bg-white text-concrete-900 border border-concrete-200 rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-50 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
+                    >
+                        進口代購
                     </button>
                 </div>
             </div>
@@ -356,9 +389,23 @@ const AppContent: React.FC = () => {
         const { id } = useParams<{ id: string }>();
         const snake = snakes.find(s => s.id === id);
         const [activeImageIndex, setActiveImageIndex] = useState(0);
+        const [offerPrice, setOfferPrice] = useState('');
+        const [isSubmitting, setIsSubmitting] = useState(false);
+        const [hasSubmitted, setHasSubmitted] = useState(false);
+        const [userIp, setUserIp] = useState('');
+        const formRef = React.useRef<HTMLFormElement>(null);
 
         useEffect(() => {
             setActiveImageIndex(0);
+            setOfferPrice('');
+            setHasSubmitted(false);
+            setUserIp('');
+            if (id) {
+                const evaluated = localStorage.getItem(`price_evaluated_${id}`);
+                if (evaluated) {
+                    setHasSubmitted(true);
+                }
+            }
             window.scrollTo(0, 0);
         }, [id]);
 
@@ -489,38 +536,135 @@ const AppContent: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="mt-6 flex gap-4">
-                                <div className="bg-concrete-50 border border-concrete-200 rounded-xl p-5 text-center w-full">
-                                    <div className="flex items-center justify-center gap-2 text-concrete-500 text-xs mb-3">
-                                        <MapPin size={14} />
-                                        <span>提供全台安全寄送服務</span>
+                            <div className="mt-6 flex flex-col gap-4">
+                                <div className="bg-concrete-50 border border-concrete-200 rounded-xl p-5 w-full">
+                                    <div className="mb-6 pb-6 border-b border-concrete-200">
+                                        <div className="flex items-center justify-center gap-2 text-concrete-500 text-xs mb-3">
+                                            <MapPin size={14} />
+                                            <span>提供全台安全寄送服務</span>
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                const genderText = snake.gender === 'Male' ? '公' : '母';
+                                                const inquiryText = `你好 我想詢問 ${genderText}${snake.morph} (${snake.id})`;
+                                                navigator.clipboard.writeText(inquiryText).then(() => {
+                                                    setShowInquiryAlert(true);
+                                                }).catch(() => {
+                                                    alert('複製失敗，請手動複製：\n' + inquiryText);
+                                                });
+                                            }}
+                                            className="inquiry-button"
+                                        >
+                                            私訊詢問
+                                        </button>
                                     </div>
-                                    <button
-                                        onClick={() => {
-                                            const genderText = snake.gender === 'Male' ? '公' : '母';
-                                            const inquiryText = `你好 我想詢問 ${genderText}${snake.morph} (${snake.id})`;
-                                            navigator.clipboard.writeText(inquiryText).then(() => {
-                                                setShowInquiryAlert(true);
-                                            }).catch(() => {
-                                                alert('複製失敗，請手動複製：\n' + inquiryText);
-                                            });
-                                        }}
-                                        className="w-full bg-concrete-900 text-white font-bold py-3 rounded-lg hover:bg-concrete-800 transition-all shadow-lg hover:shadow-xl"
-                                    >
-                                        立即詢問
-                                    </button>
+
+                                    {snake.availability !== Availability.Sold && (
+                                        !hasSubmitted ? (
+                                            <>
+                                                <div className="mb-4">
+                                                    <label className="block text-sm font-bold text-concrete-900 mb-2">
+                                                        覺得價格太高嗎？告訴我們您的期望價格
+                                                    </label>
+                                                    <div className="relative mt-2">
+                                                        <input
+                                                            type="number"
+                                                            value={offerPrice}
+                                                            onChange={(e) => setOfferPrice(e.target.value)}
+                                                            placeholder="輸入您的期望金額"
+                                                            className="block w-full rounded-2xl border border-concrete-200 bg-transparent py-4 pl-6 pr-20 text-base text-concrete-900 ring-4 ring-transparent transition placeholder:text-concrete-400 focus:border-concrete-900 focus:outline-none focus:ring-concrete-900/5"
+                                                        />
+                                                        <div className="absolute inset-y-1 right-1 flex justify-end">
+                                                            <button
+                                                                type="submit"
+                                                                aria-label="Submit"
+                                                                onClick={async () => {
+                                                                    if (!offerPrice) return;
+                                                                    setIsSubmitting(true);
+                                                                    try {
+                                                                        // 1. Get IP
+                                                                        const ipRes = await fetch('https://api.ipify.org?format=json');
+                                                                        const ipData = await ipRes.json();
+                                                                        const currentIp = ipData.ip;
+                                                                        setUserIp(currentIp);
+
+                                                                        // 2. Submit Form via hidden iframe
+                                                                        setTimeout(() => {
+                                                                            if (formRef.current) {
+                                                                                formRef.current.submit();
+                                                                                // 3. Success handling (Optimistic)
+                                                                                setHasSubmitted(true);
+                                                                                localStorage.setItem(`price_evaluated_${snake.id}`, 'true');
+                                                                                setOfferPrice('');
+                                                                                alert('感謝您的回饋！我們已收到您的期望價格。');
+                                                                            }
+                                                                        }, 100);
+
+                                                                    } catch (error) {
+                                                                        console.error('Submission error:', error);
+                                                                        alert('發生錯誤，請稍後再試。');
+                                                                        setIsSubmitting(false);
+                                                                    }
+                                                                }}
+                                                                disabled={isSubmitting || !offerPrice}
+                                                                className={`flex aspect-square h-full items-center justify-center rounded-xl bg-concrete-900 text-white transition hover:bg-concrete-800 ${isSubmitting || !offerPrice
+                                                                    ? 'opacity-50 cursor-not-allowed'
+                                                                    : ''
+                                                                    }`}
+                                                            >
+                                                                {isSubmitting ? (
+                                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                                ) : (
+                                                                    <svg viewBox="0 0 16 6" aria-hidden="true" className="w-4">
+                                                                        <path
+                                                                            fill="currentColor"
+                                                                            fillRule="evenodd"
+                                                                            clipRule="evenodd"
+                                                                            d="M16 3 10 .5v2H0v1h10v2L16 3Z"
+                                                                        ></path>
+                                                                    </svg>
+                                                                )}
+                                                            </button>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="text-center py-4">
+                                                <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 text-green-600 mb-3">
+                                                    <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                    </svg>
+                                                </div>
+                                                <h4 className="text-concrete-900 font-bold mb-1">已收到您的評價</h4>
+                                                <p className="text-concrete-500 text-sm">感謝您寶貴的意見！</p>
+                                            </div>
+                                        )
+                                    )}
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                {/* Hidden Iframe for Google Forms Submission */}
+                <iframe name="hidden_iframe" style={{ display: 'none' }} />
+
+                {/* Hidden Form targeting the iframe */}
+                <form
+                    ref={formRef}
+                    action="https://docs.google.com/forms/d/e/1FAIpQLScbtuBK0MloTMMQL5b_M4UlwDq1v-3jFSjIu1yq-DsMzom7jg/formResponse"
+                    method="POST"
+                    target="hidden_iframe"
+                    style={{ display: 'none' }}
+                >
+                    <input type="hidden" name="entry.461396906" value={`${snake.morph} (${snake.id})`} />
+                    <input type="hidden" name="entry.2123398876" value={offerPrice} />
+                    <input type="hidden" name="entry.1433715849" value={userIp} />
+                </form>
             </div>
         );
     };
-
-
-
-
 
     const Footer = () => (
         <footer className="bg-concrete-50 border-t border-concrete-200 pt-20 pb-10">
@@ -605,6 +749,7 @@ const AppContent: React.FC = () => {
                 <Route path="/blog/:slug" element={<MaintenanceView />} />
                 <Route path="/admin" element={<MaintenanceView />} />
                 <Route path="/maintenance" element={<MaintenanceView />} />
+                <Route path="/import-service" element={<ImportService />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
 
@@ -620,6 +765,54 @@ const AppContent: React.FC = () => {
                 />
             )}
 
+            {showHeroSocial && (
+                <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4" onClick={() => setShowHeroSocial(false)}>
+                    <div className="bg-white rounded-2xl p-8 max-w-sm w-full shadow-2xl relative animate-slide-up" onClick={(e) => e.stopPropagation()}>
+                        <button
+                            onClick={() => setShowHeroSocial(false)}
+                            className="absolute top-4 right-4 text-concrete-400 hover:text-concrete-900 bg-concrete-50 p-1 rounded-full"
+                        >
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 6L6 18M6 6l12 12" /></svg>
+                        </button>
+                        <h3 className="text-2xl font-bold text-concrete-900 mb-6 text-center">官方社群</h3>
+                        <div className="flex flex-col gap-4">
+                            <a
+                                href="https://www.instagram.com/meandpython?igsh=MTRmemlhaTA0ZWoxYg%3D%3D&utm_source=qr"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-4 p-4 rounded-xl bg-concrete-50 hover:bg-concrete-100 transition-colors group"
+                            >
+                                <div className="bg-white p-2 rounded-full shadow-sm group-hover:scale-110 transition-transform">
+                                    <Instagram size={24} className="text-concrete-900" />
+                                </div>
+                                <span className="font-bold text-concrete-900">Instagram</span>
+                            </a>
+                            <a
+                                href="https://www.facebook.com/profile.php?id=61558807599321"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-4 p-4 rounded-xl bg-concrete-50 hover:bg-concrete-100 transition-colors group"
+                            >
+                                <div className="bg-white p-2 rounded-full shadow-sm group-hover:scale-110 transition-transform">
+                                    <Facebook size={24} className="text-concrete-900" />
+                                </div>
+                                <span className="font-bold text-concrete-900">Facebook</span>
+                            </a>
+                            <a
+                                href="https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0stFjTg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center gap-4 p-4 rounded-xl bg-concrete-50 hover:bg-concrete-100 transition-colors group"
+                            >
+                                <div className="bg-white p-2 rounded-full shadow-sm group-hover:scale-110 transition-transform">
+                                    <LineIcon size={24} className="text-concrete-900" />
+                                </div>
+                                <span className="font-bold text-concrete-900">Line 群組</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            )}
             {showInquiryAlert && (
                 <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[9999] p-4" onClick={() => setShowInquiryAlert(false)}>
                     <div className="bg-white rounded-2xl p-8 max-w-md w-full shadow-2xl" onClick={(e) => e.stopPropagation()}>
