@@ -218,7 +218,7 @@ const AppContent: React.FC = () => {
                                         <span className="flex-shrink-0 w-8 h-8 rounded-full bg-urban-green text-white flex items-center justify-center font-bold text-sm">2</span>
                                         <div>
                                             <p className="font-bold text-concrete-900">瀏覽合作廠家</p>
-                                            <p className="text-concrete-500 text-sm">從下方廠家列表中挑選心儀的球蟒</p>
+                                            <p className="text-concrete-500 text-sm">從下方廠家列表中挑選心儀的球蟒，不用自行連絡廠家</p>
                                         </div>
                                     </li>
                                     <li className="flex gap-4">
