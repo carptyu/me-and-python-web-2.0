@@ -251,7 +251,7 @@ export const fetchVendorsFromContentful = async (): Promise<Vendor[]> => {
   try {
     const response = await client.getEntries({
       content_type: 'vendor',
-      order: 'sys.createdAt'
+      order: 'fields.name'
     });
 
     console.log("Fetched vendors from Contentful:", response.items);
