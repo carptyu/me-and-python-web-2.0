@@ -189,6 +189,9 @@ const AppContent: React.FC = () => {
                             <p className="text-concrete-600 leading-relaxed">
                                 價格計算方式：<span className="font-mono font-bold">美元 × 45 = 入手價</span>
                             </p>
+                            <p className="text-concrete-500 text-sm mt-1">
+                                * 低於500美需私訊重新計算價格
+                            </p>
                             <p className="text-concrete-500 text-sm mt-2">
                                 預計 2026 年 6 月中到達台灣
                             </p>
