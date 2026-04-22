@@ -184,13 +184,13 @@ const AppContent: React.FC = () => {
                         <h2 className="text-2xl font-bold text-concrete-900 mb-4">專業美國球蟒代購</h2>
                         <div className="bg-urban-green/10 border border-urban-green/20 rounded-xl p-6 mb-6">
                             <p className="text-concrete-700 leading-relaxed text-lg mb-4">
-                                即日起至 <span className="font-bold text-urban-green">2026/2/20</span> 截止接單
+                                即日起至 <span className="font-bold text-urban-green">2026/5/25</span> 截止接單
                             </p>
                             <p className="text-concrete-600 leading-relaxed">
                                 價格計算方式：<span className="font-mono font-bold">美元 × 45 = 入手價</span>
                             </p>
                             <p className="text-concrete-500 text-sm mt-2">
-                                預計 2026 年 3 月中旬到達台灣
+                                預計 2026 年 6 月中到達台灣
                             </p>
                         </div>
                     </div>
