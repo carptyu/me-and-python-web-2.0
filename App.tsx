@@ -184,7 +184,7 @@ const AppContent: React.FC = () => {
                         <h2 className="text-2xl font-bold text-concrete-900 mb-4">專業美國球蟒代購</h2>
                         <div className="bg-urban-green/10 border border-urban-green/20 rounded-xl p-6 mb-6">
                             <p className="text-concrete-700 leading-relaxed text-lg mb-4">
-                                即日起至 <span className="font-bold text-urban-green">2026/6/30</span> 截止接單
+                                即日起至 <span className="font-bold text-urban-green">2026/8/20</span> 截止接單
                             </p>
                             <div className="mb-4">
                                 <p className="text-concrete-600 leading-relaxed">
@@ -196,10 +196,10 @@ const AppContent: React.FC = () => {
                             </div>
                             <div className="border-t border-urban-green/20 pt-4">
                                 <p className="text-concrete-700 font-medium flex items-center gap-2">
-                                    <span>🗓️</span> 預計 2026 年 7 月中到達台灣
+                                    <span>🗓️</span> 預計 2026 年 9 月第一週到達台灣
                                 </p>
                                 <p className="text-concrete-500 text-sm mt-2">
-                                    * 視實際接單狀況，若達一定數量將提早於 6 月中安排進口
+                                    * 視實際接單狀況，若達一定數量將提早於 8 月初安排進口
                                 </p>
                             </div>
                         </div>
