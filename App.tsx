@@ -199,7 +199,7 @@ const AppContent: React.FC = () => {
                                     <span>🗓️</span> 預計 2026 年 9 月第一週到達台灣
                                 </p>
                                 <p className="text-concrete-500 text-sm mt-2">
-                                    * 視實際接單狀況，若達一定數量將提早於 8 月初安排進口
+                                    * 視實際接單狀況，若達一定數量將提早於 8 月末安排進口
                                 </p>
                             </div>
                         </div>
