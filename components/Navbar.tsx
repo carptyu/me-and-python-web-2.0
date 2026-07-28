@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { Menu, X, ShoppingBag, Search, ChevronLeft } from 'lucide-react';
+import { SCALESWAP_SHOP_URL } from '../constants';
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
@@ -25,8 +26,9 @@ const Navbar: React.FC = () => {
         }
     }, [isOpen]);
 
-    const navLinks = [
-        { name: '線上選購', path: '/shop' },
+    const navLinks: { name: string; path: string; external?: boolean }[] = [
+        // 蛇隻上架已移至 ScaleSwap，站內 /shop 封存於 archive/shop-2026-07/
+        { name: '線上選購', path: SCALESWAP_SHOP_URL, external: true },
         { name: '飼養日誌', path: '/blog' },
         { name: '品牌理念', path: '/about' },
     ];
@@ -95,16 +97,28 @@ const Navbar: React.FC = () => {
                         {/* Desktop Nav */}
                         <div className="hidden md:flex items-center space-x-8">
                             {navLinks.map((link) => (
-                                <Link
-                                    key={link.name}
-                                    to={link.path}
-                                    className={`text-sm font-medium transition-colors duration-300 ${isCurrentPage(link.path)
-                                        ? 'text-urban-green'
-                                        : 'text-concrete-500 hover:text-concrete-900'
-                                        }`}
-                                >
-                                    {link.name}
-                                </Link>
+                                link.external ? (
+                                    <a
+                                        key={link.name}
+                                        href={link.path}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="text-sm font-medium transition-colors duration-300 text-concrete-500 hover:text-concrete-900"
+                                    >
+                                        {link.name}
+                                    </a>
+                                ) : (
+                                    <Link
+                                        key={link.name}
+                                        to={link.path}
+                                        className={`text-sm font-medium transition-colors duration-300 ${isCurrentPage(link.path)
+                                            ? 'text-urban-green'
+                                            : 'text-concrete-500 hover:text-concrete-900'
+                                            }`}
+                                    >
+                                        {link.name}
+                                    </Link>
+                                )
                             ))}
                         </div>
 
@@ -144,13 +158,26 @@ const Navbar: React.FC = () => {
                         首頁
                     </button>
                     {navLinks.map((link) => (
-                        <button
-                            key={link.name}
-                            onClick={() => handleNav(link.path)}
-                            className="text-4xl font-bold text-concrete-400 text-left hover:text-concrete-900 transition-colors"
-                        >
-                            {link.name}
-                        </button>
+                        link.external ? (
+                            <a
+                                key={link.name}
+                                href={link.path}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                onClick={() => setIsOpen(false)}
+                                className="text-4xl font-bold text-concrete-400 text-left hover:text-concrete-900 transition-colors"
+                            >
+                                {link.name}
+                            </a>
+                        ) : (
+                            <button
+                                key={link.name}
+                                onClick={() => handleNav(link.path)}
+                                className="text-4xl font-bold text-concrete-400 text-left hover:text-concrete-900 transition-colors"
+                            >
+                                {link.name}
+                            </button>
+                        )
                     ))}
                     <button
                         onClick={() => handleNav('/maintenance')}

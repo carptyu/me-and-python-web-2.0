@@ -1,5 +1,11 @@
 import { Snake, Article } from './types';
 
+/**
+ * 蛇隻上架統一走 ScaleSwap。站內 /shop、/snake/:id 已於 2026-07 封存，
+ * 原始程式碼保留在 archive/shop-2026-07/。
+ */
+export const SCALESWAP_SHOP_URL = 'https://www.scaleswap.co/sellers/me_and_python';
+
 export const FEATURED_SNAKES: Snake[] = [];
 
 export const ARTICLES: Article[] = [

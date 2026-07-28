@@ -8,14 +8,8 @@
     <priority>1.0</priority>
   </url>
   
-  <!-- 線上選購 -->
-  <url>
-    <loc>https://me-and-python-web-20.vercel.app/shop</loc>
-    <lastmod>2025-12-02</lastmod>
-    <changefreq>daily</changefreq>
-    <priority>0.9</priority>
-  </url>
-  
+  <!-- 線上選購已移至 ScaleSwap，站內 /shop 已封存 -->
+
   <!-- 飼養日誌 -->
   <url>
     <loc>https://me-and-python-web-20.vercel.app/blog</loc>
