@@ -10,6 +10,14 @@
   
   <!-- 線上選購已移至 ScaleSwap，站內 /shop 已封存 -->
 
+  <!-- 基因檢測服務 -->
+  <url>
+    <loc>https://me-and-python-web-20.vercel.app/genetic-test</loc>
+    <lastmod>2026-09-04</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>0.8</priority>
+  </url>
+
   <!-- 飼養日誌 -->
   <url>
     <loc>https://me-and-python-web-20.vercel.app/blog</loc>

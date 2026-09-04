@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
+import GeneticTestPage from './components/GeneticTestPage';
 
 import { SCALESWAP_SHOP_URL } from './constants';
 import { Vendor } from './types';
@@ -444,7 +445,7 @@ const AppContent: React.FC = () => {
                 <p className="text-lg md:text-2xl text-concrete-500 font-light max-w-2xl mx-auto mb-10">
                     共同發掘 球蟒的無限可能
                 </p>
-                <div className="flex flex-col sm:flex-row gap-4 justify-center w-full sm:w-auto px-6 sm:px-0">
+                <div className="flex flex-col sm:flex-row sm:flex-wrap gap-4 justify-center w-full sm:w-auto px-6 sm:px-0">
                     <a
                         href={SCALESWAP_SHOP_URL}
                         target="_blank"
@@ -464,6 +465,12 @@ const AppContent: React.FC = () => {
                         className="bg-white text-concrete-900 border border-concrete-200 rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-50 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
                     >
                         進口代購
+                    </button>
+                    <button
+                        onClick={() => navigate('/genetic-test')}
+                        className="bg-white text-concrete-900 border border-concrete-200 rounded-lg px-8 py-4 text-sm font-medium hover:bg-concrete-50 transition-all w-full sm:w-auto flex items-center justify-center gap-2"
+                    >
+                        基因檢測
                     </button>
                 </div>
             </div>
@@ -563,6 +570,7 @@ const AppContent: React.FC = () => {
                     <div>
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">客戶服務</h4>
                         <ul className="space-y-3 text-concrete-500">
+                            <li><button onClick={() => navigate('/genetic-test')} className="hover:text-concrete-900 transition-colors">基因檢測</button></li>
                             <li><span className="text-concrete-300 cursor-not-allowed">飼養指南 (維修中)</span></li>
                             <li><span className="text-concrete-300 cursor-not-allowed">運送政策 (維修中)</span></li>
                         </ul>
@@ -631,6 +639,7 @@ const AppContent: React.FC = () => {
                 <Route path="/admin" element={<MaintenanceView />} />
                 <Route path="/maintenance" element={<MaintenanceView />} />
                 <Route path="/import-service" element={<ImportService />} />
+                <Route path="/genetic-test" element={<GeneticTestPage />} />
                 <Route path="/vendor/:id/appendix" element={<VendorAppendixPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

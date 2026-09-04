@@ -1,0 +1,104 @@
+// 封存自 geneticTestData.ts（2026-09-04 移除）。要復用時貼回資料檔即可。
+
+/**
+ * Phenome 以美金定價，這裡換算成台幣報價。
+ * ⚠️ 45 是進口代購在用的數字（含服務成本，非匯率），檢測服務請自行確認。
+ */
+export const USD_TO_TWD = 45;
+
+export const usdToTwd = (usd: number) => usd * USD_TO_TWD;
+
+/**
+ * Phenome 的計價與可測項目，取自其商品頁的 reptile_genetic_assay 設定
+ * （https://phenome.com/product/ball-python/，2026-08 擷取；2026-09-04 核對 /price-list 一致）。
+ *
+ * Phenome 沒有獨立的「套組」商品，而是一份自選清單 + 階梯計價：
+ * 選越多項總價越划算，選到 11 項就等於隱性套組價，選到 18 項就等於完整套組價。
+ */
+export const PHENOME_PRICE_TIERS_USD: Record<number, number> = {
+  1: 35, 2: 45, 3: 50, 4: 55, 5: 60, 6: 65, 7: 70, 8: 75, 9: 80, 10: 85,
+  11: 95, 12: 95, 13: 95, 14: 95, 15: 95, 16: 95, 17: 95,
+  18: 125, 19: 125, 20: 125, 21: 125, 22: 125, 23: 125, 24: 125, 25: 125,
+};
+
+/** 選到這個數量（含）以上，一律是完整套組價 */
+export const PHENOME_FULL_PANEL_THRESHOLD = 18;
+export const PHENOME_FULL_PANEL_PRICE_USD = 125;
+
+/** 選 n 項的美金價 */
+export function phenomePriceUsd(count: number): number {
+  if (count <= 0) return 0;
+  if (count >= PHENOME_FULL_PANEL_THRESHOLD) return PHENOME_FULL_PANEL_PRICE_USD;
+  return PHENOME_PRICE_TIERS_USD[count];
+}
+
+/**
+ * 目前選 count 項時，同一個價格最多還能加驗到幾項。
+ * 用來提示「再加 N 項不用加錢」，沒有加值空間就回 null。
+ */
+export function phenomeSamePriceCeiling(count: number): number | null {
+  if (count <= 0) return null;
+  if (count >= PHENOME_FULL_PANEL_THRESHOLD) {
+    return count < PHENOME_TESTS.length ? PHENOME_TESTS.length : null;
+  }
+  const price = phenomePriceUsd(count);
+  let n = count;
+  while (n + 1 <= PHENOME_FULL_PANEL_THRESHOLD && phenomePriceUsd(n + 1) === price) n++;
+  return n > count ? n : null;
+}
+
+/** Phenome 可檢測的全部項目（45 項，含性別鑑定） */
+export const PHENOME_TESTS: Gene[] = [
+  { en: 'NEW - Rainbow', zh: '彩虹（新推出）' },
+  { en: 'Male/Female', zh: '性別鑑定' },
+  { en: 'Albino', zh: '白化' },
+  { en: 'Asphalt', zh: '瀝青' },
+  { en: 'Bamboo', zh: '竹子' },
+  { en: 'Bongo', zh: '邦戈' },
+  { en: 'Candy', zh: '糖果' },
+  { en: 'Champagne', zh: '香檳' },
+  { en: 'Chocolate', zh: '巧克力' },
+  { en: 'Clown', zh: '小丑' },
+  { en: 'Cryptic', zh: '隱匿' },
+  { en: 'Cypress', zh: '柏木' },
+  { en: 'Desert Ghost', zh: '沙漠幽靈' },
+  { en: 'Disco', zh: '迪斯可' },
+  { en: 'Enchi', zh: '恩奇' },
+  { en: 'Fire', zh: '火' },
+  { en: 'Genetic Stripe', zh: '遺傳直線' },
+  { en: 'GHI' },
+  { en: 'Gravel', zh: '礫石' },
+  { en: 'Hurricane/Blitz/Trick', zh: '颶風/詭計' },
+  { en: 'HRA', zh: 'Het Red Axanthic' },
+  { en: 'Hypo', zh: '幽靈' },
+  { en: 'Lace', zh: '蕾絲' },
+  { en: 'Lavender Albino', zh: '薰衣草白化' },
+  { en: 'Lesser', zh: '輕白金' },
+  { en: 'Mojave', zh: '莫哈維' },
+  { en: 'Monarch', zh: '君主' },
+  { en: 'Monsoon', zh: '季風' },
+  { en: 'NR Mandarin', zh: 'NR 橘子' },
+  { en: 'Phantom', zh: '幻影' },
+  { en: 'Piebald', zh: '派' },
+  { en: 'Puzzle', zh: '謎題' },
+  { en: 'Russo', zh: '羅素' },
+  { en: 'Spark', zh: '火花' },
+  { en: 'Special(Baker Line)', zh: '特別（Baker 線）' },
+  { en: 'Specter', zh: '鬼魂' },
+  { en: 'Spider', zh: '蜘蛛' },
+  { en: 'Spotnose', zh: '斑鼻' },
+  { en: 'Sunset', zh: '日落' },
+  { en: 'Ultramel', zh: '超白化' },
+  { en: 'Vanilla', zh: '香草' },
+  { en: 'VPI Axanthic', zh: 'VPI缺黃' },
+  { en: 'Wookie', zh: '伍基' },
+  { en: 'Yellow Belly', zh: '黃腹' },
+  { en: 'Zebra', zh: '斑馬' },
+];
+
+/** Phenome 歸類為隱性的項目（17 項，全選剛好落在 US$95 那一階） */
+export const PHENOME_RECESSIVE_NAMES: string[] = [
+  'NEW - Rainbow', 'Albino', 'Candy', 'Clown', 'Cryptic', 'Desert Ghost',
+  'Genetic Stripe', 'Hypo', 'Lavender Albino', 'Monarch', 'Monsoon',
+  'Piebald', 'Puzzle', 'Sunset', 'Ultramel', 'VPI Axanthic', 'Zebra',
+];
