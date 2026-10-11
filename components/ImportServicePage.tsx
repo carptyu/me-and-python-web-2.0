@@ -8,6 +8,7 @@ import { Card, ContactButtons, SectionHeader } from './shared';
 
 const hasAppendix = (v: (typeof VENDORS)[number]) => (v.appendixFiles?.length ?? 0) > 0 || !!v.appendixLabel;
 const anyAppendix = VENDORS.some(hasAppendix);
+const SORTED_VENDORS = [...VENDORS].sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }));
 
 const FLOW: { icon: LucideIcon; title: string; body: React.ReactNode }[] = [
     {
@@ -137,24 +138,25 @@ const ImportServicePage: React.FC = () => (
                         標有「附錄」的廠家以清單形式販售，請點附錄查看清單。
                     </p>
                 )}
-                <ul className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2">
-                    {VENDORS.map(v => (
-                        <li key={v.id} className="flex items-stretch rounded-xl border border-concrete-200 hover:border-urban-green/50 transition-colors">
+                {/* 純文字清單、照字母由上往下排（CSS columns），比一格一格的方框好掃讀 */}
+                <ul className="columns-1 sm:columns-2 lg:columns-3 gap-x-10 border-t border-concrete-200 sm:border-t-0">
+                    {SORTED_VENDORS.map(v => (
+                        <li key={v.id} className="break-inside-avoid flex items-center gap-3 border-b border-concrete-100">
                             <a
                                 href={v.url}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group flex-1 min-w-0 flex items-center justify-between gap-2 px-4 py-3"
+                                className="group flex-1 min-w-0 flex items-center justify-between gap-3 py-3"
                             >
-                                <span className="font-medium text-concrete-900 group-hover:text-urban-green transition-colors break-words">{v.name}</span>
-                                <ArrowUpRight size={16} className="flex-shrink-0 text-concrete-400 group-hover:text-urban-green transition-colors" />
+                                <span className="text-[15px] font-medium text-concrete-900 group-hover:text-urban-green transition-colors">{v.name}</span>
+                                <ArrowUpRight size={15} className="flex-shrink-0 text-concrete-300 group-hover:text-urban-green transition-colors" />
                             </a>
                             {hasAppendix(v) && (
                                 <Link
                                     to={`/vendor/${v.id}/appendix`}
-                                    className="flex items-center gap-1 px-3 border-l border-concrete-200 text-xs font-medium text-urban-green hover:bg-urban-green/10 rounded-r-xl"
+                                    className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-urban-green/10 text-xs font-medium text-urban-green hover:bg-urban-green/20"
                                 >
-                                    <FileText size={14} /> 附錄
+                                    <FileText size={13} /> 附錄
                                 </Link>
                             )}
                         </li>
