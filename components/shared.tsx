@@ -1,5 +1,5 @@
-import React from 'react';
-import { Instagram, Facebook } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Instagram, Facebook, X } from 'lucide-react';
 import { IG_URL, FB_URL, LINE_URL } from '../constants';
 
 // 跨頁共用的小元件。版面語彙以基因檢測頁為準：白卡片 + 綠色英文小標 + 粗標題。
@@ -33,6 +33,44 @@ export const CONTACTS = [
     { key: 'ig', label: 'Instagram', hint: '私訊詢問', href: IG_URL, icon: Instagram, className: 'bg-gradient-to-r from-purple-500 to-pink-500' },
     { key: 'fb', label: 'Facebook', hint: '粉絲專頁私訊', href: FB_URL, icon: Facebook, className: 'bg-blue-600' },
 ] as const;
+
+/** 選擇聯絡平台的對話框：點背景、右上 X 或按 Esc 關閉 */
+export const ContactModal = ({ open, onClose, title, lead }: { open: boolean; onClose: () => void; title: string; lead?: string }) => {
+    useEffect(() => {
+        if (!open) return;
+        const onKey = (e: KeyboardEvent) => e.key === 'Escape' && onClose();
+        document.addEventListener('keydown', onKey);
+        document.body.style.overflow = 'hidden';
+        return () => {
+            document.removeEventListener('keydown', onKey);
+            document.body.style.overflow = '';
+        };
+    }, [open, onClose]);
+
+    if (!open) return null;
+    return (
+        <div className="fixed inset-0 z-[9999] bg-black/50 flex items-center justify-center p-4" onClick={onClose}>
+            <div
+                role="dialog"
+                aria-modal="true"
+                aria-label={title}
+                className="relative w-full max-w-sm bg-white rounded-2xl p-6 shadow-2xl animate-slide-up"
+                onClick={e => e.stopPropagation()}
+            >
+                <button
+                    onClick={onClose}
+                    aria-label="關閉"
+                    className="absolute top-3 right-3 p-1.5 rounded-full bg-concrete-100 text-zinc-600 hover:text-concrete-900"
+                >
+                    <X size={18} />
+                </button>
+                <h3 className="text-lg font-bold text-concrete-900 pr-8">{title}</h3>
+                {lead && <p className="text-sm text-zinc-600 leading-relaxed mt-1">{lead}</p>}
+                <ContactButtons showHint className="mt-5" />
+            </div>
+        </div>
+    );
+};
 
 /** 三個聯絡管道按鈕；showHint 時在按鈕上多一行用途說明 */
 export const ContactButtons = ({ showHint = false, className = '' }: { showHint?: boolean; className?: string }) => (

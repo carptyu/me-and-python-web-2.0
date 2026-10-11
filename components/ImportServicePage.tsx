@@ -1,10 +1,10 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowUpRight, CalendarClock, Calculator, ChevronRight, FileText, MessageCircle, Search, Users, Wallet, LucideIcon } from 'lucide-react';
 import { IMPORT_STATUS, IMPORT_PRICING, LINE_URL } from '../constants';
 import { VENDORS } from '../vendorsData';
 import { TERMS_HIGHLIGHTS } from '../importTermsData';
-import { Card, ContactButtons, SectionHeader } from './shared';
+import { Card, ContactButtons, ContactModal, SectionHeader } from './shared';
 
 const hasAppendix = (v: (typeof VENDORS)[number]) => (v.appendixFiles?.length ?? 0) > 0 || !!v.appendixLabel;
 const anyAppendix = VENDORS.some(hasAppendix);
@@ -78,7 +78,9 @@ const ANCHORS = [
     { href: '#contact', label: '聯絡我們' },
 ];
 
-const ImportServicePage: React.FC = () => (
+const ImportServicePage: React.FC = () => {
+    const [askOpen, setAskOpen] = useState(false);
+    return (
     <div className="bg-concrete-50 pb-20">
         {/* ===== Hero ===== */}
         <header className="bg-white border-b border-concrete-200 pt-28 md:pt-36 pb-12 md:pb-16">
@@ -184,6 +186,19 @@ const ImportServicePage: React.FC = () => (
                 {/* logo 卡片（比照 MorphMarket 店家目錄、各大平台合作夥伴頁）：logo → 名稱 → 所在地·專長 */}
                 <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
                     {SORTED_VENDORS.map(v => <VendorCard key={v.id} v={v} />)}
+                    {/* 最後一格：不知道怎麼挑的人直接私訊 */}
+                    <li>
+                        <button
+                            onClick={() => setAskOpen(true)}
+                            className="group w-full h-full flex flex-col items-center justify-center text-center rounded-xl border-2 border-dashed border-urban-green/40 bg-urban-green/5 px-3 pt-5 pb-4 hover:border-urban-green hover:bg-urban-green/10 transition-colors"
+                        >
+                            <span className="w-20 h-20 rounded-xl bg-urban-green text-white flex items-center justify-center" aria-hidden>
+                                <MessageCircle size={32} />
+                            </span>
+                            <span className="mt-3 font-bold text-[15px] text-concrete-900 group-hover:text-urban-green transition-colors">不會挑？</span>
+                            <span className="text-sm text-zinc-600 mt-0.5">私訊聯絡我們</span>
+                        </button>
+                    </li>
                 </ul>
             </Card>
 
@@ -203,7 +218,15 @@ const ImportServicePage: React.FC = () => (
                 <ContactButtons showHint />
             </section>
         </div>
-    </div>
-);
+
+            <ContactModal
+                open={askOpen}
+                onClose={() => setAskOpen(false)}
+                title="不會挑？私訊聯絡我們"
+                lead="告訴我們預算和喜歡的品系，我們幫你從合作廠家裡找。選一個方便的平台聯絡："
+            />
+        </div>
+    );
+};
 
 export default ImportServicePage;
