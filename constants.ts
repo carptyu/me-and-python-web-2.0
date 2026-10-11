@@ -6,6 +6,25 @@ import { Snake, Article } from './types';
  */
 export const SCALESWAP_SHOP_URL = 'https://www.scaleswap.co/sellers/me_and_python';
 
+export const IG_URL = 'https://www.instagram.com/meandpython?igsh=MTRmemlhaTA0ZWoxYg%3D%3D&utm_source=qr';
+export const FB_URL = 'https://www.facebook.com/profile.php?id=61558807599321';
+export const LINE_URL = 'https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0stFjTg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default';
+
+/**
+ * 進口代購目前狀態：代購頁與首頁服務卡共用，開團／結單時改這裡就好。
+ * open=true 時首頁卡片會標「接單中」。
+ */
+export const IMPORT_STATUS = {
+  open: false,
+  headline: '下一批進口時程目前未定',
+  detail: '上一批進口已結單，下一批確定後會另行公告，有興趣歡迎先私訊詢問。',
+};
+
+export const IMPORT_PRICING = {
+  formula: '美元 × 45 = 入手價',
+  note: '低於 500 美元需私訊重新計算價格',
+};
+
 export const FEATURED_SNAKES: Snake[] = [];
 
 export const ARTICLES: Article[] = [

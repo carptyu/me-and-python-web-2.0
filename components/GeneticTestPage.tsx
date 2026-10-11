@@ -23,16 +23,9 @@ import {
 } from 'lucide-react';
 import GeneticTestCalculator from './GeneticTestCalculator';
 import { OPENING_PROMO } from '../geneticTestData';
+import { IG_URL, FB_URL, LINE_URL } from '../constants';
+import { Card, LineIcon, SectionHeader } from './shared';
 
-const IG_URL = 'https://www.instagram.com/meandpython?igsh=MTRmemlhaTA0ZWoxYg%3D%3D&utm_source=qr';
-const FB_URL = 'https://www.facebook.com/profile.php?id=61558807599321';
-const LINE_URL = 'https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0stFjTg?utm_source=invitation&utm_medium=link_copy&utm_campaign=default';
-
-const LineIcon = ({ size = 24, className = '' }: { size?: number; className?: string }) => (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" className={className} xmlns="http://www.w3.org/2000/svg">
-        <path d="M22.28 12.33C22.28 6.78 17.29 2.26 11.14 2.26C4.99 2.26 0 6.78 0 12.33C0 16.68 2.89 20.44 7.04 21.84C7.31 21.96 7.48 22.13 7.54 22.42C7.6 22.75 7.56 23.16 7.53 23.47C7.53 23.47 7.42 24.1 7.4 24.17C7.36 24.36 7.28 24.64 7.55 24.68C7.82 24.72 8.11 24.58 8.35 24.4C8.6 24.22 12.28 21.65 13.8 20.57C18.8 20.3 22.28 16.66 22.28 12.33Z" fill="currentColor" />
-    </svg>
-);
 
 type IconType = LucideIcon;
 
@@ -138,20 +131,6 @@ const ANCHORS = [
 /* ------------------------------------------------------------------ */
 /* 小元件                                                              */
 /* ------------------------------------------------------------------ */
-
-const SectionHeader = ({ index, title, lead }: { index: string; title: string; lead?: string }) => (
-    <div className="mb-8 md:mb-10">
-        <p className="text-urban-green font-bold text-[11px] tracking-[0.25em] uppercase mb-2">{index}</p>
-        <h2 className="text-2xl md:text-3xl font-bold text-concrete-900 tracking-tight">{title}</h2>
-        {lead && <p className="text-zinc-600 mt-3 max-w-2xl leading-relaxed">{lead}</p>}
-    </div>
-);
-
-const Card = ({ id, children, className = '' }: { id?: string; children: React.ReactNode; className?: string }) => (
-    <section id={id} className={`scroll-mt-24 bg-white rounded-2xl border border-concrete-200 p-6 md:p-10 ${className}`}>
-        {children}
-    </section>
-);
 
 const AlleleDots = ({ alleles }: { alleles: [boolean, boolean] }) => (
     <div className="flex items-center gap-1.5" aria-hidden>

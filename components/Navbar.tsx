@@ -1,7 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation, Link } from 'react-router-dom';
-import { Menu, X, ShoppingBag, Search, ChevronLeft } from 'lucide-react';
+import { Menu, X, ChevronLeft, ArrowUpRight, MessageCircle } from 'lucide-react';
 import { SCALESWAP_SHOP_URL } from '../constants';
+import { CONTACTS } from './shared';
+
+// 導覽只放實際有內容的頁面；飼養日誌、品牌理念等維修中頁面不放進來
+const navLinks: { name: string; path: string; external?: boolean }[] = [
+    { name: '進口代購', path: '/import-service' },
+    { name: '基因檢測', path: '/genetic-test' },
+    // 蛇隻上架已移至 ScaleSwap，站內 /shop 封存於 archive/shop-2026-07/
+    { name: '線上選購', path: SCALESWAP_SHOP_URL, external: true },
+];
 
 const Navbar: React.FC = () => {
     const navigate = useNavigate();
@@ -10,48 +19,35 @@ const Navbar: React.FC = () => {
     const [scrolled, setScrolled] = useState(false);
 
     useEffect(() => {
-        const handleScroll = () => {
-            setScrolled(window.scrollY > 20);
-        };
+        const handleScroll = () => setScrolled(window.scrollY > 20);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
     // Lock body scroll when mobile menu is open
     useEffect(() => {
-        if (isOpen) {
-            document.body.style.overflow = 'hidden';
-        } else {
-            document.body.style.overflow = 'unset';
-        }
+        document.body.style.overflow = isOpen ? 'hidden' : 'unset';
     }, [isOpen]);
-
-    const navLinks: { name: string; path: string; external?: boolean }[] = [
-        // 蛇隻上架已移至 ScaleSwap，站內 /shop 封存於 archive/shop-2026-07/
-        { name: '線上選購', path: SCALESWAP_SHOP_URL, external: true },
-        { name: '飼養日誌', path: '/blog' },
-        { name: '品牌理念', path: '/about' },
-    ];
 
     const handleNav = (path: string) => {
         navigate(path);
         setIsOpen(false);
     };
 
-    // Determine if we can go back
-    const canGoBack = window.history.length > 1;
+    // 首頁不需要返回鍵；其他頁從 IG / LINE 內建瀏覽器點進來時方便回上一頁
+    const showBack = location.pathname !== '/' && window.history.length > 1;
 
-    // Check if current page matches a path
-    const isCurrentPage = (path: string) => {
-        if (path === '/') return location.pathname === '/';
-        return location.pathname.startsWith(path);
-    };
+    const isCurrentPage = (path: string) => location.pathname.startsWith(path);
+    // 代購細則與廠家附錄都算在「進口代購」底下
+    const isActive = (path: string) =>
+        isCurrentPage(path) ||
+        (path === '/import-service' && (isCurrentPage('/import-terms') || isCurrentPage('/vendor/')));
 
     return (
         <>
             <nav
-                className={`fixed top-0 w-full z-40 transition-all duration-300 border-b ${scrolled
-                    ? 'bg-white/80 backdrop-blur-md border-concrete-200 shadow-sm'
+                className={`fixed top-0 w-full z-40 transition-all duration-300 border-b ${scrolled || isOpen
+                    ? 'bg-white/90 backdrop-blur-md border-concrete-200 shadow-sm'
                     : 'bg-white/0 border-transparent'
                     }`}
             >
@@ -60,76 +56,67 @@ const Navbar: React.FC = () => {
 
                         {/* Left Section: Back Button + Logo */}
                         <div className="flex items-center gap-2 md:gap-4 z-50">
-
-                            {/* Global Back Button - Only shows if history > 1 */}
-                            <div className={`transition-all duration-300 ${canGoBack ? 'opacity-100 translate-x-0 w-8' : 'opacity-0 -translate-x-4 w-0 pointer-events-none'}`}>
+                            {showBack && (
                                 <button
                                     onClick={() => navigate(-1)}
                                     className="w-8 h-8 flex items-center justify-center rounded-full bg-concrete-100 hover:bg-concrete-200 text-concrete-900 transition-colors"
-                                    aria-label="Go Back"
+                                    aria-label="返回上一頁"
                                 >
                                     <ChevronLeft size={20} />
                                 </button>
-                            </div>
-
-                            {/* Logo / Home */}
-                            <Link to="/" className="flex-shrink-0 cursor-pointer group">
+                            )}
+                            <Link to="/" className="flex-shrink-0 cursor-pointer group" onClick={() => setIsOpen(false)}>
                                 <div className="flex items-center gap-2 md:gap-3">
-                                    {/* Logo Image */}
                                     <img
                                         src="/logo.svg"
                                         alt="Me&Python Logo"
                                         className="h-8 md:h-10 w-auto transition-transform duration-300 group-hover:scale-105"
                                     />
-                                    {/* Brand Text */}
                                     <div className="flex flex-col leading-none">
-                                        <span className={`text-xl md:text-2xl font-bold tracking-widest transition-colors ${scrolled || isOpen ? 'text-concrete-900' : 'text-concrete-900 md:text-concrete-800'}`}>
-                                            迷蟒
-                                        </span>
-                                        <span className="text-[10px] font-bold tracking-[0.2em] text-urban-green group-hover:tracking-[0.25em] transition-all duration-500">
-                                            ME&PYTHON
-                                        </span>
+                                        <span className="text-xl md:text-2xl font-bold tracking-widest text-concrete-900">迷蟒</span>
+                                        <span className="text-[10px] font-bold tracking-[0.2em] text-urban-green">ME&PYTHON</span>
                                     </div>
                                 </div>
                             </Link>
                         </div>
 
                         {/* Desktop Nav */}
-                        <div className="hidden md:flex items-center space-x-8">
-                            {navLinks.map((link) => (
+                        <div className="hidden md:flex items-center gap-8">
+                            {navLinks.map(link =>
                                 link.external ? (
                                     <a
                                         key={link.name}
                                         href={link.path}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="text-sm font-medium transition-colors duration-300 text-concrete-500 hover:text-concrete-900"
+                                        className="inline-flex items-center gap-0.5 text-sm font-medium text-zinc-600 hover:text-concrete-900 transition-colors"
                                     >
                                         {link.name}
+                                        <ArrowUpRight size={14} />
                                     </a>
                                 ) : (
                                     <Link
                                         key={link.name}
                                         to={link.path}
-                                        className={`text-sm font-medium transition-colors duration-300 ${isCurrentPage(link.path)
+                                        className={`text-sm font-medium transition-colors ${isActive(link.path)
                                             ? 'text-urban-green'
-                                            : 'text-concrete-500 hover:text-concrete-900'
+                                            : 'text-zinc-600 hover:text-concrete-900'
                                             }`}
                                     >
                                         {link.name}
                                     </Link>
                                 )
-                            ))}
+                            )}
                         </div>
 
-                        {/* Search/Cart Placeholder or CTA */}
-                        <div className="hidden md:flex items-center gap-5">
-                            <button onClick={() => navigate('/maintenance')} className="text-concrete-400 hover:text-concrete-900 transition-colors">
-                                <Search size={18} />
-                            </button>
-                            <button onClick={() => navigate('/maintenance')} className="text-concrete-900 hover:text-urban-green transition-colors relative">
-                                <ShoppingBag size={18} />
-                            </button>
+                        <div className="hidden md:flex items-center">
+                            <Link
+                                to="/#contact"
+                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-concrete-900 text-white text-sm font-medium hover:bg-concrete-800 transition-colors"
+                            >
+                                <MessageCircle size={16} />
+                                聯絡我們
+                            </Link>
                         </div>
 
                         {/* Mobile Menu Button */}
@@ -137,6 +124,7 @@ const Navbar: React.FC = () => {
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
                                 className="text-concrete-900 p-2 focus:outline-none"
+                                aria-label={isOpen ? '關閉選單' : '開啟選單'}
                             >
                                 {isOpen ? <X size={24} /> : <Menu size={24} />}
                             </button>
@@ -148,16 +136,16 @@ const Navbar: React.FC = () => {
             {/* Mobile menu Overlay (Full Screen) */}
             <div
                 className={`fixed inset-0 bg-white z-30 transform transition-transform duration-500 ease-in-out ${isOpen ? 'translate-x-0' : 'translate-x-full'
-                    } md:hidden flex flex-col justify-center px-8`}
+                    } md:hidden flex flex-col pt-24 pb-10 px-8 overflow-y-auto`}
             >
-                <div className="flex flex-col space-y-8">
+                <div className="flex flex-col gap-6">
                     <button
                         onClick={() => handleNav('/')}
-                        className="text-4xl font-bold text-concrete-900 text-left hover:text-urban-green transition-colors"
+                        className={`text-3xl font-bold text-left transition-colors ${location.pathname === '/' ? 'text-urban-green' : 'text-concrete-900'}`}
                     >
                         首頁
                     </button>
-                    {navLinks.map((link) => (
+                    {navLinks.map(link =>
                         link.external ? (
                             <a
                                 key={link.name}
@@ -165,26 +153,45 @@ const Navbar: React.FC = () => {
                                 target="_blank"
                                 rel="noopener noreferrer"
                                 onClick={() => setIsOpen(false)}
-                                className="text-4xl font-bold text-concrete-400 text-left hover:text-concrete-900 transition-colors"
+                                className="inline-flex items-center gap-1 text-3xl font-bold text-concrete-900"
                             >
                                 {link.name}
+                                <ArrowUpRight size={24} className="text-concrete-400" />
                             </a>
                         ) : (
                             <button
                                 key={link.name}
                                 onClick={() => handleNav(link.path)}
-                                className="text-4xl font-bold text-concrete-400 text-left hover:text-concrete-900 transition-colors"
+                                className={`text-3xl font-bold text-left transition-colors ${isActive(link.path) ? 'text-urban-green' : 'text-concrete-900'}`}
                             >
                                 {link.name}
                             </button>
                         )
-                    ))}
+                    )}
                     <button
-                        onClick={() => handleNav('/maintenance')}
-                        className="text-4xl font-bold text-urban-green text-left mt-8 pt-8 border-t border-concrete-200"
+                        onClick={() => handleNav('/import-terms')}
+                        className="text-lg font-medium text-left text-zinc-600"
                     >
-                        購物車 / 結帳
+                        代購交易細則
                     </button>
+                </div>
+
+                <div className="mt-auto pt-10">
+                    <p className="text-[11px] font-bold tracking-[0.25em] uppercase text-concrete-400 mb-3">聯絡我們</p>
+                    <div className="flex gap-3">
+                        {CONTACTS.map(c => (
+                            <a
+                                key={c.key}
+                                href={c.href}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                aria-label={c.label}
+                                className={`w-12 h-12 rounded-full flex items-center justify-center text-white ${c.className}`}
+                            >
+                                <c.icon size={22} />
+                            </a>
+                        ))}
+                    </div>
                 </div>
             </div>
         </>
