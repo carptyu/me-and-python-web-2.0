@@ -50,7 +50,7 @@ export interface ChatMessage {
 }
 
 export interface Vendor {
-  id: string; // Contentful entry ID for routing
+  id: string; // 用於 /vendor/:id/appendix 路由
   name: string;
   url: string;
   appendixFiles?: string[]; // URLs to appendix files/images

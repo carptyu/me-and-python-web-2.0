@@ -4,9 +4,8 @@ import Navbar from './components/Navbar';
 import GeneticTestPage from './components/GeneticTestPage';
 
 import { SCALESWAP_SHOP_URL } from './constants';
-import { Vendor } from './types';
-import { ChevronRight, Instagram, Facebook, Construction, ArrowLeft, ZoomIn, Loader2, FileText } from 'lucide-react';
-import { fetchVendorsFromContentful } from './services/contentfulService';
+import { VENDORS as vendors } from './vendorsData';
+import { ChevronRight, Instagram, Facebook, Construction, ArrowLeft, ZoomIn, FileText } from 'lucide-react';
 import { SpeedInsights } from "@vercel/speed-insights/react"
 import { Analytics } from "@vercel/analytics/react"
 import Lightbox from './components/Lightbox';
@@ -133,19 +132,6 @@ const AppContent: React.FC = () => {
 
     const [isTutorialOpen, setIsTutorialOpen] = useState(false);
     const [showSocialChoice, setShowSocialChoice] = useState(false);
-    const [vendors, setVendors] = useState<Vendor[]>([]);
-    const [isLoadingVendors, setIsLoadingVendors] = useState(true);
-
-    // Fetch vendors from Contentful
-    useEffect(() => {
-        const loadVendors = async () => {
-            setIsLoadingVendors(true);
-            const cmsVendors = await fetchVendorsFromContentful();
-            setVendors(cmsVendors);
-            setIsLoadingVendors(false);
-        };
-        loadVendors();
-    }, []);
 
     const ImportService = () => (
         <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
@@ -241,16 +227,7 @@ const AppContent: React.FC = () => {
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {isLoadingVendors ? (
-                                        <tr>
-                                            <td colSpan={2} className="p-8 text-center">
-                                                <div className="flex items-center justify-center gap-2 text-concrete-400">
-                                                    <Loader2 className="animate-spin" size={20} />
-                                                    <span>載入廠家資料中...</span>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                    ) : vendors.length === 0 ? (
+                                    {vendors.length === 0 ? (
                                         <tr>
                                             <td colSpan={2} className="p-8 text-center text-concrete-400">
                                                 目前沒有廠家資料
@@ -338,17 +315,6 @@ const AppContent: React.FC = () => {
         useEffect(() => {
             window.scrollTo(0, 0);
         }, [id]);
-
-        if (isLoadingVendors) {
-            return (
-                <div className="pt-24 pb-20 bg-concrete-50 min-h-screen flex items-center justify-center">
-                    <div className="flex items-center gap-2 text-concrete-400">
-                        <Loader2 className="animate-spin" size={24} />
-                        <span>載入中...</span>
-                    </div>
-                </div>
-            );
-        }
 
         if (!vendor) {
             return (
