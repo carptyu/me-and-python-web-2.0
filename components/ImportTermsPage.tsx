@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import React from 'react';
+import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { TERMS_INTRO, TERMS_SECTIONS, TERMS_VERSION, TermsItem } from '../importTermsData';
 
@@ -19,16 +19,8 @@ const ItemList = ({ items }: { items: TermsItem[] }) => (
     </ul>
 );
 
+// /import-terms#doa 這類錨點跳轉由 ScrollManager 處理
 const ImportTermsPage: React.FC = () => {
-    const { hash } = useLocation();
-
-    // 支援 /import-terms#doa 這類連結直接跳到該條
-    useEffect(() => {
-        const el = hash ? document.getElementById(decodeURIComponent(hash.slice(1))) : null;
-        if (el) el.scrollIntoView();
-        else window.scrollTo(0, 0);
-    }, [hash]);
-
     return (
         <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
             <div className="max-w-4xl mx-auto px-4 md:px-6">

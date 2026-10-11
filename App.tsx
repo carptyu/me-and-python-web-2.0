@@ -1,8 +1,9 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState } from 'react';
 import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import GeneticTestPage from './components/GeneticTestPage';
 import ImportTermsPage from './components/ImportTermsPage';
+import ScrollManager from './components/ScrollManager';
 import { TERMS_HIGHLIGHTS } from './importTermsData';
 
 import { SCALESWAP_SHOP_URL } from './constants';
@@ -343,11 +344,6 @@ const AppContent: React.FC = () => {
         const { id } = useParams<{ id: string }>();
         const vendor = vendors.find(v => v.id === id);
 
-        // Scroll to top when entering this page
-        useEffect(() => {
-            window.scrollTo(0, 0);
-        }, [id]);
-
         if (!vendor) {
             return (
                 <div className="pt-24 pb-20 bg-concrete-50 min-h-screen">
@@ -643,6 +639,7 @@ const AppContent: React.FC = () => {
                 <Route path="/vendor/:id/appendix" element={<VendorAppendixPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
+            <ScrollManager />
 
             <Footer />
 
