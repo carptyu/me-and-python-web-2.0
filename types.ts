@@ -55,7 +55,7 @@ export interface Vendor {
   url: string;
   appendixFiles?: string[]; // URLs to appendix files/images
   appendixLabel?: string; // Optional description for appendix
-  logo?: string; // 廠家 logo，放 public/vendors/，這裡填 '/vendors/<id>.png'；沒有就顯示名稱縮寫
+  logo?: string; // 廠家 logo，放 public/vendors/，這裡填 '/vendors/<id>.webp'；沒有就顯示名稱縮寫
   location?: string; // 所在地，例如 'Texas'
   specialty?: string; // 一句話專長，例如 '隱性系、Clown 組合'
 }

@@ -24,9 +24,9 @@ const VendorCard = ({ v }: { v: (typeof VENDORS)[number] }) => {
         <li className="group relative flex flex-col items-center text-center rounded-xl border border-concrete-200 bg-white px-3 pt-5 pb-4 hover:border-urban-green/50 hover:shadow-sm transition-all">
             <ArrowUpRight size={14} className="absolute top-3 right-3 text-concrete-300 group-hover:text-urban-green transition-colors" aria-hidden />
             {v.logo ? (
-                <img src={v.logo} alt="" className="w-16 h-16 rounded-xl object-contain bg-white" loading="lazy" />
+                <img src={v.logo} alt="" width={80} height={80} className="w-20 h-20 rounded-xl object-cover bg-concrete-900" loading="lazy" />
             ) : (
-                <span className="w-16 h-16 rounded-xl bg-urban-green/10 text-urban-green text-lg font-bold tracking-wide flex items-center justify-center" aria-hidden>
+                <span className="w-20 h-20 rounded-xl bg-urban-green/10 text-urban-green text-xl font-bold tracking-wide flex items-center justify-center" aria-hidden>
                     {monogram(v.name)}
                 </span>
             )}

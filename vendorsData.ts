@@ -9,12 +9,12 @@ const mm = (seller: string) =>
   `https://www.morphmarket.com/us/c/reptiles/pythons/ball-pythons?seller=${seller}&state=for_sale`;
 
 export const VENDORS: Vendor[] = [
-  { id: "americanmadeexoticsllc", name: "American Made Exotics", url: mm("americanmadeexoticsllc") },
-  { id: "aurareptiles", name: "Aura", url: mm("aurareptiles") },
-  { id: "ballpythons101", name: "Ball Pythons 101", url: mm("ballpythons101") },
-  { id: "ballroom", name: "Ballroom Pythons South", url: mm("ballroom") },
-  { id: "jbaud", name: "Baud's Exotic Reptiles", url: mm("jbaud") },
-  { id: "bobvu", name: "Bobs Balls", url: mm("bobvu") },
+  { id: "americanmadeexoticsllc", name: "American Made Exotics", url: mm("americanmadeexoticsllc"), logo: "/vendors/americanmadeexoticsllc.webp" },
+  { id: "aurareptiles", name: "Aura", url: mm("aurareptiles"), logo: "/vendors/aurareptiles.webp" },
+  { id: "ballpythons101", name: "Ball Pythons 101", url: mm("ballpythons101"), logo: "/vendors/ballpythons101.webp" },
+  { id: "ballroom", name: "Ballroom Pythons South", url: mm("ballroom"), logo: "/vendors/ballroom.webp" },
+  { id: "jbaud", name: "Baud's Exotic Reptiles", url: mm("jbaud"), logo: "/vendors/jbaud.webp" },
+  { id: "bobvu", name: "Bobs Balls", url: mm("bobvu"), logo: "/vendors/bobvu.webp" },
   { id: "brockwagner", name: "Brock Wagner Reptiles", url: mm("brockwagner") },
   { id: "chimera_reptile", name: "Chimera", url: mm("chimera_reptile") },
   { id: "conduitconstrictors", name: "Conduit Constrictors", url: mm("conduitconstrictors") },
