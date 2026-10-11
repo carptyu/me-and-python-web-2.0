@@ -10,6 +10,49 @@ const hasAppendix = (v: (typeof VENDORS)[number]) => (v.appendixFiles?.length ??
 const anyAppendix = VENDORS.some(hasAppendix);
 const SORTED_VENDORS = [...VENDORS].sort((a, b) => a.name.localeCompare(b.name, 'en', { sensitivity: 'base' }));
 
+// 沒有 logo 時用名稱縮寫當識別：取前兩個英文字的字首，例如 Ball Pythons 101 → BP
+const monogram = (name: string) =>
+    name
+        .split(/[\s&]+/)
+        .filter(w => /^[A-Za-z]/.test(w))
+        .slice(0, 2)
+        .map(w => w[0].toUpperCase())
+        .join('');
+
+const VendorCard = ({ v }: { v: (typeof VENDORS)[number] }) => {
+    return (
+        <li className="group relative flex flex-col items-center text-center rounded-xl border border-concrete-200 bg-white px-3 pt-5 pb-4 hover:border-urban-green/50 hover:shadow-sm transition-all">
+            <ArrowUpRight size={14} className="absolute top-3 right-3 text-concrete-300 group-hover:text-urban-green transition-colors" aria-hidden />
+            {v.logo ? (
+                <img src={v.logo} alt="" className="w-16 h-16 rounded-xl object-contain bg-white" loading="lazy" />
+            ) : (
+                <span className="w-16 h-16 rounded-xl bg-urban-green/10 text-urban-green text-lg font-bold tracking-wide flex items-center justify-center" aria-hidden>
+                    {monogram(v.name)}
+                </span>
+            )}
+            {/* 整張卡片可點：連結的 after 撐滿卡片 */}
+            <a
+                href={v.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-3 font-bold text-[15px] text-concrete-900 leading-snug group-hover:text-urban-green transition-colors after:absolute after:inset-0 after:content-['']"
+            >
+                {v.name}
+            </a>
+            {v.location && <p className="text-xs text-concrete-400 mt-1">{v.location}</p>}
+            {v.specialty && <p className="text-sm text-zinc-600 leading-snug mt-1">{v.specialty}</p>}
+            {hasAppendix(v) && (
+                <Link
+                    to={`/vendor/${v.id}/appendix`}
+                    className="relative z-10 mt-3 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-urban-green/10 text-xs font-medium text-urban-green hover:bg-urban-green/20"
+                >
+                    <FileText size={13} /> 附錄
+                </Link>
+            )}
+        </li>
+    );
+};
+
 const FLOW: { icon: LucideIcon; title: string; body: React.ReactNode }[] = [
     {
         icon: Users,
@@ -138,29 +181,9 @@ const ImportServicePage: React.FC = () => (
                         標有「附錄」的廠家以清單形式販售，請點附錄查看清單。
                     </p>
                 )}
-                {/* 純文字清單、照字母由上往下排（CSS columns），比一格一格的方框好掃讀 */}
-                <ul className="columns-1 sm:columns-2 lg:columns-3 gap-x-10 border-t border-concrete-200 sm:border-t-0">
-                    {SORTED_VENDORS.map(v => (
-                        <li key={v.id} className="break-inside-avoid flex items-center gap-3 border-b border-concrete-100">
-                            <a
-                                href={v.url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="group flex-1 min-w-0 flex items-center justify-between gap-3 py-3"
-                            >
-                                <span className="text-[15px] font-medium text-concrete-900 group-hover:text-urban-green transition-colors">{v.name}</span>
-                                <ArrowUpRight size={15} className="flex-shrink-0 text-concrete-300 group-hover:text-urban-green transition-colors" />
-                            </a>
-                            {hasAppendix(v) && (
-                                <Link
-                                    to={`/vendor/${v.id}/appendix`}
-                                    className="flex-shrink-0 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-urban-green/10 text-xs font-medium text-urban-green hover:bg-urban-green/20"
-                                >
-                                    <FileText size={13} /> 附錄
-                                </Link>
-                            )}
-                        </li>
-                    ))}
+                {/* logo 卡片（比照 MorphMarket 店家目錄、各大平台合作夥伴頁）：logo → 名稱 → 所在地·專長 */}
+                <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+                    {SORTED_VENDORS.map(v => <VendorCard key={v.id} v={v} />)}
                 </ul>
             </Card>
 
