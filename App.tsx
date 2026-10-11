@@ -2,6 +2,8 @@
 import { BrowserRouter, Routes, Route, useNavigate, useParams, Navigate } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import GeneticTestPage from './components/GeneticTestPage';
+import ImportTermsPage from './components/ImportTermsPage';
+import { TERMS_HIGHLIGHTS } from './importTermsData';
 
 import { SCALESWAP_SHOP_URL } from './constants';
 import { VENDORS as vendors } from './vendorsData';
@@ -164,6 +166,31 @@ const AppContent: React.FC = () => {
                         </div>
                     </div>
 
+                    {/* Terms Highlights */}
+                    <div className="mb-8 bg-amber-50 border border-amber-200 rounded-xl p-5 md:p-6">
+                        <h3 className="text-lg font-bold text-concrete-900 mb-1">⚠️ 下單前必讀</h3>
+                        <p className="text-zinc-600 text-sm mb-4">
+                            付款下單即視為同意
+                            <button onClick={() => navigate('/import-terms')} className="font-bold text-urban-green hover:underline">《迷蟒海外進口代購交易細則》</button>
+                        </p>
+                        <ul className="space-y-2 mb-5">
+                            {TERMS_HIGHLIGHTS.map(h => (
+                                <li key={h.anchor} className="flex gap-2 text-concrete-900 leading-relaxed">
+                                    <span className="text-amber-600 flex-shrink-0">•</span>
+                                    <button onClick={() => navigate(`/import-terms#${h.anchor}`)} className="text-left hover:text-urban-green transition-colors">
+                                        {h.text}
+                                    </button>
+                                </li>
+                            ))}
+                        </ul>
+                        <button
+                            onClick={() => navigate('/import-terms')}
+                            className="inline-flex items-center gap-1 px-4 py-2 bg-concrete-900 text-white text-sm font-medium rounded-lg hover:bg-concrete-800 transition-colors"
+                        >
+                            閱讀完整交易細則 <ChevronRight size={16} />
+                        </button>
+                    </div>
+
                     {/* Collapsible Tutorial Section */}
                     <div className="mb-8">
                         <button
@@ -266,6 +293,11 @@ const AppContent: React.FC = () => {
                             </table>
                         </div>
                     </div>
+
+                    <p className="mt-8 pt-6 border-t border-concrete-200 text-sm text-zinc-600 text-center">
+                        付款下單即視為同意
+                        <button onClick={() => navigate('/import-terms')} className="font-bold text-urban-green hover:underline">《迷蟒海外進口代購交易細則》</button>
+                    </p>
                 </div>
             </div>
 
@@ -537,6 +569,7 @@ const AppContent: React.FC = () => {
                         <h4 className="font-bold text-concrete-900 mb-4 uppercase tracking-wider">客戶服務</h4>
                         <ul className="space-y-3 text-concrete-500">
                             <li><button onClick={() => navigate('/genetic-test')} className="hover:text-concrete-900 transition-colors">基因檢測</button></li>
+                            <li><button onClick={() => navigate('/import-terms')} className="hover:text-concrete-900 transition-colors">代購交易細則</button></li>
                             <li><span className="text-concrete-300 cursor-not-allowed">飼養指南 (維修中)</span></li>
                             <li><span className="text-concrete-300 cursor-not-allowed">運送政策 (維修中)</span></li>
                         </ul>
@@ -606,6 +639,7 @@ const AppContent: React.FC = () => {
                 <Route path="/maintenance" element={<MaintenanceView />} />
                 <Route path="/import-service" element={<ImportService />} />
                 <Route path="/genetic-test" element={<GeneticTestPage />} />
+                <Route path="/import-terms" element={<ImportTermsPage />} />
                 <Route path="/vendor/:id/appendix" element={<VendorAppendixPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
