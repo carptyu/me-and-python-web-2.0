@@ -15,9 +15,9 @@ export const LINE_URL = 'https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0s
  * open=true 時首頁卡片會標「接單中」。
  */
 export const IMPORT_STATUS = {
-  open: false,
+  open: true,
   headline: '下一批預計 12 月中抵台',
-  detail: '實際抵台日會在 LINE 群組公告，有興趣歡迎先私訊詢問。',
+  detail: '現正接單中，挑好個體私訊我們即可；實際抵台日會在 LINE 群組公告。',
 };
 
 export const IMPORT_PRICING = {
