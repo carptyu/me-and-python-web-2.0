@@ -16,8 +16,8 @@ export const LINE_URL = 'https://line.me/ti/g2/tagALcVDnwwtTiTojJGCnJf0bpmdzlv0s
  */
 export const IMPORT_STATUS = {
   open: false,
-  headline: '下一批進口時程目前未定',
-  detail: '上一批進口已結單，下一批確定後會另行公告，有興趣歡迎先私訊詢問。',
+  headline: '下一批預計 12 月中抵台',
+  detail: '實際抵台日會在 LINE 群組公告，有興趣歡迎先私訊詢問。',
 };
 
 export const IMPORT_PRICING = {
