@@ -37,6 +37,9 @@ const Navbar: React.FC = () => {
     // 首頁不需要返回鍵；其他頁從 IG / LINE 內建瀏覽器點進來時方便回上一頁
     const showBack = location.pathname !== '/' && window.history.length > 1;
 
+    // 首頁頂端疊在深色蛇 Hero 上：還沒捲動、選單沒開時改用白字版
+    const onDarkHero = location.pathname === '/' && !scrolled && !isOpen;
+
     const isCurrentPage = (path: string) => location.pathname.startsWith(path);
     // 代購細則與廠家附錄都算在「進口代購」底下
     const isActive = (path: string) =>
@@ -46,6 +49,7 @@ const Navbar: React.FC = () => {
     return (
         <>
             <nav
+                data-snake-ignore
                 className={`fixed top-0 w-full z-40 transition-all duration-300 border-b ${scrolled || isOpen
                     ? 'bg-white/90 backdrop-blur-md border-concrete-200 shadow-sm'
                     : 'bg-white/0 border-transparent'
@@ -70,11 +74,11 @@ const Navbar: React.FC = () => {
                                     <img
                                         src="/logo.svg"
                                         alt="Me&Python Logo"
-                                        className="h-8 md:h-10 w-auto transition-transform duration-300 group-hover:scale-105"
+                                        className={`h-8 md:h-10 w-auto transition duration-300 group-hover:scale-105 ${onDarkHero ? 'brightness-0 invert' : ''}`}
                                     />
                                     <div className="flex flex-col leading-none">
-                                        <span className="text-xl md:text-2xl font-bold tracking-widest text-concrete-900">迷蟒</span>
-                                        <span className="text-[10px] font-bold tracking-[0.2em] text-urban-green">ME&PYTHON</span>
+                                        <span className={`text-xl md:text-2xl font-bold tracking-widest transition-colors ${onDarkHero ? 'text-white' : 'text-concrete-900'}`}>迷蟒</span>
+                                        <span className={`text-[10px] font-bold tracking-[0.2em] transition-colors ${onDarkHero ? 'text-[#a9c2ad]' : 'text-urban-green'}`}>ME&PYTHON</span>
                                     </div>
                                 </div>
                             </Link>
@@ -89,7 +93,7 @@ const Navbar: React.FC = () => {
                                         href={link.path}
                                         target="_blank"
                                         rel="noopener noreferrer"
-                                        className="inline-flex items-center gap-0.5 text-sm font-medium text-zinc-600 hover:text-concrete-900 transition-colors"
+                                        className={`inline-flex items-center gap-0.5 text-sm font-medium transition-colors ${onDarkHero ? 'text-white/70 hover:text-white' : 'text-zinc-600 hover:text-concrete-900'}`}
                                     >
                                         {link.name}
                                         <ArrowUpRight size={14} />
@@ -100,7 +104,9 @@ const Navbar: React.FC = () => {
                                         to={link.path}
                                         className={`text-sm font-medium transition-colors ${isActive(link.path)
                                             ? 'text-urban-green'
-                                            : 'text-zinc-600 hover:text-concrete-900'
+                                            : onDarkHero
+                                                ? 'text-white/70 hover:text-white'
+                                                : 'text-zinc-600 hover:text-concrete-900'
                                             }`}
                                     >
                                         {link.name}
@@ -112,7 +118,7 @@ const Navbar: React.FC = () => {
                         <div className="hidden md:flex items-center">
                             <Link
                                 to="/#contact"
-                                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-concrete-900 text-white text-sm font-medium hover:bg-concrete-800 transition-colors"
+                                className={`inline-flex items-center gap-1.5 px-4 py-2 rounded-full text-sm font-medium transition-colors ${onDarkHero ? 'bg-white text-concrete-900 hover:bg-concrete-100' : 'bg-concrete-900 text-white hover:bg-concrete-800'}`}
                             >
                                 <MessageCircle size={16} />
                                 聯絡我們
@@ -123,7 +129,7 @@ const Navbar: React.FC = () => {
                         <div className="md:hidden flex items-center z-50">
                             <button
                                 onClick={() => setIsOpen(!isOpen)}
-                                className="text-concrete-900 p-2 focus:outline-none"
+                                className={`p-2 focus:outline-none transition-colors ${onDarkHero ? 'text-white' : 'text-concrete-900'}`}
                                 aria-label={isOpen ? '關閉選單' : '開啟選單'}
                             >
                                 {isOpen ? <X size={24} /> : <Menu size={24} />}

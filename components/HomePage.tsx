@@ -1,9 +1,24 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, ArrowUpRight, Dna, Plane, Store, LucideIcon } from 'lucide-react';
 import { SCALESWAP_SHOP_URL, IMPORT_STATUS } from '../constants';
 import { OPENING_PROMO } from '../geneticTestData';
 import { ContactButtons } from './shared';
+import SnakeCanvas from './SnakeCanvas';
+
+/** Hero 底色：跟頁尾上方的聯絡區塊同色（concrete-900），首尾兩塊深色對稱 */
+const HERO_BG = '#18181b';
+
+/**
+ * Hero 底部融進下方淺色區塊（concrete-50）的漸層。用緩動的透明度節點而不是直線兩色，
+ * 深轉淺中間才不會出現一條髒灰帶。
+ */
+const PAGE_BG = '250,250,250';
+const FADE_STOPS: [number, number][] = [
+    [0, 0], [8.1, 0.013], [15.5, 0.049], [22.5, 0.104], [29, 0.175], [35.3, 0.259], [41.2, 0.352], [47.1, 0.45],
+    [52.9, 0.55], [58.8, 0.648], [64.7, 0.741], [71, 0.825], [77.5, 0.896], [84.5, 0.951], [91.9, 0.987], [100, 1],
+];
+const BOTTOM_FADE = `linear-gradient(to bottom, ${FADE_STOPS.map(([p, a]) => `rgba(${PAGE_BG},${a}) ${p}%`).join(', ')})`;
 
 type Service = {
     icon: LucideIcon;
@@ -76,45 +91,69 @@ const ServiceCard = ({ s }: { s: Service }) => {
     );
 };
 
-const HomePage: React.FC = () => (
-    <div className="bg-concrete-50">
-        {/* ===== Hero ===== */}
-        <header className="bg-concrete-100 border-b border-concrete-200 pt-32 md:pt-44 pb-16 md:pb-24">
-            <div className="max-w-5xl mx-auto px-6 text-center flex flex-col items-center animate-fade-in">
-                <span className="text-urban-green font-bold text-xs md:text-sm mb-5 tracking-[0.2em] uppercase bg-urban-green/10 px-3 py-1 rounded-full">
-                    Urban Jungle Collection
-                </span>
-                <h1 className="text-5xl md:text-7xl font-bold text-concrete-900 tracking-tight leading-[1.1] mb-5">
-                    <span className="block">城市綠洲</span>
-                    <span className="block text-concrete-400 mt-1">迷蟒陪伴</span>
-                </h1>
-                <p className="text-lg md:text-xl text-zinc-600 mb-10">共同發掘 球蟒的無限可能</p>
-                <div className="flex flex-col sm:flex-row gap-3 w-full sm:w-auto">
-                    <a
-                        href={SCALESWAP_SHOP_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-1.5 bg-concrete-900 text-white rounded-xl px-7 py-3.5 text-sm font-bold hover:bg-concrete-800 transition-colors shadow-lg"
-                    >
-                        選購在售個體 <ArrowUpRight size={16} />
-                    </a>
-                    <Link
-                        to="/import-service"
-                        className="inline-flex items-center justify-center bg-white text-concrete-900 border border-concrete-200 rounded-xl px-7 py-3.5 text-sm font-bold hover:border-concrete-400 transition-colors"
-                    >
-                        進口代購
-                    </Link>
-                    <Link
-                        to="/genetic-test"
-                        className="inline-flex items-center justify-center bg-white text-concrete-900 border border-concrete-200 rounded-xl px-7 py-3.5 text-sm font-bold hover:border-concrete-400 transition-colors"
-                    >
-                        基因檢測
-                    </Link>
+const Hero: React.FC = () => {
+    const contentRef = useRef<HTMLDivElement>(null);
+    const ghost =
+        'inline-flex items-center justify-center bg-concrete-900/80 text-white border border-white/15 rounded-xl px-7 py-3.5 text-sm font-bold backdrop-blur-md hover:bg-concrete-800/90 hover:border-white/35 transition-colors';
+
+    return (
+        <header className="relative isolate overflow-hidden h-[100svh] min-h-[600px] max-h-[960px] cursor-none" style={{ background: HERO_BG }}>
+            <SnakeCanvas background={HERO_BG} avoidRef={contentRef} className="absolute inset-0 w-full h-full" />
+
+            {/* 標題底下一圈柔和的暗影、頂端一道漸層：蛇從字或導覽列底下爬過時字還是清楚 */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 hidden md:block"
+                style={{
+                    background: `radial-gradient(ellipse 46% 40% at 50% 54%, ${HERO_BG}f0 0%, ${HERO_BG}b3 45%, ${HERO_BG}00 78%), linear-gradient(to bottom, ${HERO_BG}e6 0, ${HERO_BG}00 128px)`,
+                }}
+            />
+            {/* 手機版：標題佔滿整個寬度，暗影要拉寬 */}
+            <div
+                aria-hidden="true"
+                className="pointer-events-none absolute inset-0 md:hidden"
+                style={{
+                    background: `radial-gradient(ellipse 85% 34% at 50% 54%, ${HERO_BG}f2 0%, ${HERO_BG}c0 50%, ${HERO_BG}00 85%), linear-gradient(to bottom, ${HERO_BG}e6 0, ${HERO_BG}00 104px)`,
+                }}
+            />
+
+            <div className="pointer-events-none relative z-10 h-full flex items-center justify-center px-6 pt-16">
+                <div ref={contentRef} className="flex flex-col items-center text-center w-full max-w-3xl animate-fade-in">
+                    <h1 className="text-5xl md:text-7xl font-bold text-white tracking-tight leading-[1.1] mb-5">
+                        <span className="block">城市綠洲</span>
+                        <span className="block text-white/40 mt-1">迷蟒陪伴</span>
+                    </h1>
+                    <p className="text-lg md:text-xl text-white/70 mb-10">共同發掘 球蟒的無限可能</p>
+                    <div data-snake-ignore className="pointer-events-auto cursor-auto grid grid-cols-2 sm:flex gap-3 w-full sm:w-auto">
+                        <a
+                            href={SCALESWAP_SHOP_URL}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="col-span-2 inline-flex items-center justify-center gap-1.5 bg-white text-concrete-900 rounded-xl px-7 py-3.5 text-sm font-bold hover:bg-concrete-100 transition-colors shadow-lg shadow-black/30"
+                        >
+                            選購在售個體 <ArrowUpRight size={16} />
+                        </a>
+                        <Link to="/import-service" className={ghost}>
+                            進口代購
+                        </Link>
+                        <Link to="/genetic-test" className={ghost}>
+                            基因檢測
+                        </Link>
+                    </div>
                 </div>
             </div>
-        </header>
 
-        <div className="max-w-5xl mx-auto px-6 py-16 md:py-24 space-y-16 md:space-y-24">
+            {/* 底部漸層：深色 Hero 慢慢融進下方的淺色內容 */}
+            <div aria-hidden="true" className="pointer-events-none absolute bottom-0 inset-x-0 h-32 md:h-44" style={{ background: BOTTOM_FADE }} />
+        </header>
+    );
+};
+
+const HomePage: React.FC = () => (
+    <div className="bg-concrete-50">
+        <Hero />
+
+        <div className="max-w-5xl mx-auto px-6 pt-8 pb-16 md:pt-12 md:pb-24 space-y-16 md:space-y-24">
             {/* ===== Services ===== */}
             <section>
                 <div className="mb-8 md:mb-10">
