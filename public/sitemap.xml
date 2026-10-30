@@ -2,7 +2,7 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <!-- 首頁 -->
   <url>
-    <loc>https://me-and-python-web-20.vercel.app/</loc>
+    <loc>https://www.meandpython.com/</loc>
     <lastmod>2025-12-02</lastmod>
     <changefreq>daily</changefreq>
     <priority>1.0</priority>
@@ -12,12 +12,12 @@
 
   <!-- 基因檢測服務 -->
   <url>
-    <loc>https://me-and-python-web-20.vercel.app/genetic-test</loc>
+    <loc>https://www.meandpython.com/genetic-test</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
   </url>  <url>
-    <loc>https://me-and-python-web-20.vercel.app/import-terms</loc>
+    <loc>https://www.meandpython.com/import-terms</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
@@ -25,7 +25,7 @@
 
   <!-- 飼養日誌 -->
   <url>
-    <loc>https://me-and-python-web-20.vercel.app/blog</loc>
+    <loc>https://www.meandpython.com/blog</loc>
     <lastmod>2025-12-02</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.7</priority>
@@ -33,7 +33,7 @@
   
   <!-- 品牌理念 -->
   <url>
-    <loc>https://me-and-python-web-20.vercel.app/about</loc>
+    <loc>https://www.meandpython.com/about</loc>
     <lastmod>2025-12-02</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
