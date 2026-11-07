@@ -461,10 +461,6 @@ const GeneticTestCalculator: React.FC = () => {
                     {copied ? '已複製，可直接私訊貼上' : '複製這份試算'}
                 </button>
             </div>
-
-            <p className="text-concrete-400 text-xs mt-3">
-                * 試算金額僅供參考，不含國際運費與代收轉付，實際金額以私訊確認為準。
-            </p>
         </div>
     );
 };
