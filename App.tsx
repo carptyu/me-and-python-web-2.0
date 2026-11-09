@@ -4,6 +4,7 @@ import Navbar from './components/Navbar';
 import GeneticTestPage from './components/GeneticTestPage';
 import ImportTermsPage from './components/ImportTermsPage';
 import ScrollManager from './components/ScrollManager';
+import SeoManager from './components/SeoManager';
 import HomePage from './components/HomePage';
 import ImportServicePage from './components/ImportServicePage';
 import Footer from './components/Footer';
@@ -227,6 +228,7 @@ const AppContent: React.FC = () => {
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
             <ScrollManager />
+            <SeoManager />
 
             <Footer />
 

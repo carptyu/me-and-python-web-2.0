@@ -10,32 +10,26 @@
   
   <!-- 線上選購已移至 ScaleSwap，站內 /shop 已封存 -->
 
+  <!-- 進口代購服務 -->
+  <url>
+    <loc>https://www.meandpython.com/import-service</loc>
+    <lastmod>2026-11-09</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+  </url>
+
   <!-- 基因檢測服務 -->
   <url>
     <loc>https://www.meandpython.com/genetic-test</loc>
     <lastmod>2026-09-04</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>  <url>
+  </url>
+
+  <url>
     <loc>https://www.meandpython.com/import-terms</loc>
     <lastmod>2026-10-11</lastmod>
     <changefreq>monthly</changefreq>
     <priority>0.8</priority>
-  </url>
-
-  <!-- 飼養日誌 -->
-  <url>
-    <loc>https://www.meandpython.com/blog</loc>
-    <lastmod>2025-12-02</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-  
-  <!-- 品牌理念 -->
-  <url>
-    <loc>https://www.meandpython.com/about</loc>
-    <lastmod>2025-12-02</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
   </url>
 </urlset>
