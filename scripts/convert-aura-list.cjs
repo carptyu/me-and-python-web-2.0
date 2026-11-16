@@ -20,7 +20,11 @@ if (cell || row.length) { row.push(cell); rows.push(row); }
 
 const head = rows[0].map(h => h.replace(/\*/g, '').trim());
 const col = n => head.indexOf(n);
-const data = rows.slice(1).filter(r => r[col('Title')]?.trim());
+// 低於這個美元價格的個體不上架（2026-11 使用者指定）。要改門檻就改這個數字再重轉。
+const MIN_PRICE = 250;
+const all = rows.slice(1).filter(r => r[col('Title')]?.trim());
+const data = all.filter(r => (Number(r[col('Price')]) || 0) >= MIN_PRICE);
+console.log(`total ${all.length}, skipped under US$${MIN_PRICE}: ${all.length - data.length}`);
 
 const count = k => {
   const m = {};
@@ -47,7 +51,7 @@ const items = data.map(r => {
   if (dob) o.dob = dob;
   const clutch = r[col('Group_Id')].trim();
   if (clutch) o.clutch = clutch;
-  if (/^yes$/i.test(r[col('Proven_Breeder')].trim())) o.proven = true;
+  // Proven_Breeder 欄不採用：原始清單把初生幼體也標成 Yes，資料不可靠。
   return o;
 });
 
@@ -83,7 +87,6 @@ export interface AuraListItem {
   price: number;       // 美元
   dob?: string;        // YYYY-MM-DD
   clutch?: string;     // 窩號（開頭四碼是出生年）
-  proven?: true;       // 已有繁殖紀錄
   truncated?: true;    // 原始清單的基因欄被截斷（結尾是 ...）
 }
 

@@ -101,9 +101,7 @@ const Row = ({ item, onAsk }: { item: AuraListItem; onAsk: (i: AuraListItem) => 
                     <span key={g.label} className={`px-2.5 py-0.5 rounded-full text-[13px] leading-5 font-medium ${geneClass(g)}`}>
                         {g.label}
                     </span>
-                ))}
-                {item.proven && <span className="px-2 py-0.5 rounded-md text-[13px] leading-5 bg-amber-100 text-amber-900">已有繁殖紀錄</span>}
-            </div>
+                ))}            </div>
 
             <button
                 onClick={() => onAsk(item)}
