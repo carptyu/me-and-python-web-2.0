@@ -1,4 +1,4 @@
-// Aura 清單轉檔：node scripts/convert-aura-list.cjs <試算表匯出的.csv> auraListData.ts（不給輸出檔則只印摘要）
+// Aura 清單轉檔：node scripts/convert-aura-list.cjs <試算表匯出的.csv> auraListData.ts [最低美元價]（不給輸出檔則只印摘要）
 const fs = require('fs');
 const [, , src, out] = process.argv;
 const text = fs.readFileSync(src, 'utf8').replace(/^﻿/, '');
@@ -20,8 +20,9 @@ if (cell || row.length) { row.push(cell); rows.push(row); }
 
 const head = rows[0].map(h => h.replace(/\*/g, '').trim());
 const col = n => head.indexOf(n);
-// 低於這個美元價格的個體不上架（2026-11 使用者指定）。要改門檻就改這個數字再重轉。
-const MIN_PRICE = 500;
+// 價格門檻不是固定規則：預設不過濾。這次要撤掉低價個體時才在最後加一個數字，
+// 例如 node scripts/convert-aura-list.cjs <csv> auraListData.ts 500（2026-11-16 那版用的是 500）。
+const MIN_PRICE = Number(process.argv[4]) || 0;
 const all = rows.slice(1).filter(r => r[col('Title')]?.trim());
 const data = all.filter(r => (Number(r[col('Price')]) || 0) >= MIN_PRICE);
 console.log(`total ${all.length}, skipped under US$${MIN_PRICE}: ${all.length - data.length}`);
