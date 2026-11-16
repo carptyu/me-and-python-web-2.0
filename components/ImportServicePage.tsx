@@ -46,7 +46,7 @@ const VendorCard = ({ v }: { v: (typeof VENDORS)[number] }) => {
                     to={`/vendor/${v.id}/appendix`}
                     className="relative z-10 mt-3 inline-flex items-center gap-1 px-2 py-1 rounded-md bg-urban-green/10 text-xs font-medium text-urban-green hover:bg-urban-green/20"
                 >
-                    <FileText size={13} /> 附錄
+                    <FileText size={13} /> 現貨清單
                 </Link>
             )}
         </li>
@@ -180,7 +180,7 @@ const ImportServicePage: React.FC = () => {
                 />
                 {anyAppendix && (
                     <p className="text-sm text-amber-900 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2 mb-4">
-                        標有「附錄」的廠家以清單形式販售，請點附錄查看清單。
+                        標有「現貨清單」的廠家另外提供清單，點標籤就能直接在站內搜尋、篩選。
                     </p>
                 )}
                 {/* logo 卡片（比照 MorphMarket 店家目錄、各大平台合作夥伴頁）：logo → 名稱 → 所在地·專長 */}

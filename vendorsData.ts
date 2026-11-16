@@ -10,7 +10,7 @@ const mm = (seller: string) =>
 
 export const VENDORS: Vendor[] = [
   { id: "americanmadeexoticsllc", name: "American Made Exotics", url: mm("americanmadeexoticsllc"), logo: "/vendors/americanmadeexoticsllc.webp" },
-  { id: "aurareptiles", name: "Aura", url: mm("aurareptiles"), logo: "/vendors/aurareptiles.webp" },
+  { id: "aurareptiles", name: "Aura", url: mm("aurareptiles"), logo: "/vendors/aurareptiles.webp", appendixLabel: "現貨清單（資料在 auraListData.ts，頁面是 components/AuraListPage.tsx）" },
   { id: "ballpythons101", name: "Ball Pythons 101", url: mm("ballpythons101"), logo: "/vendors/ballpythons101.webp" },
   { id: "ballroom", name: "Ballroom Pythons South", url: mm("ballroom"), logo: "/vendors/ballroom.webp" },
   { id: "jbaud", name: "Baud's Exotic Reptiles", url: mm("jbaud"), logo: "/vendors/jbaud.webp" },

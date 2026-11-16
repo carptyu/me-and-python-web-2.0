@@ -8,6 +8,7 @@ import SeoManager from './components/SeoManager';
 import HomePage from './components/HomePage';
 import ImportServicePage from './components/ImportServicePage';
 import Footer from './components/Footer';
+import AuraListPage from './components/AuraListPage';
 
 import { VENDORS as vendors } from './vendorsData';
 import { Construction, ArrowLeft, ZoomIn, FileText } from 'lucide-react';
@@ -224,6 +225,7 @@ const AppContent: React.FC = () => {
                 <Route path="/import-service" element={<ImportServicePage />} />
                 <Route path="/genetic-test" element={<GeneticTestPage />} />
                 <Route path="/import-terms" element={<ImportTermsPage />} />
+                <Route path="/vendor/aurareptiles/appendix" element={<AuraListPage />} />
                 <Route path="/vendor/:id/appendix" element={<VendorAppendixPage />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>
