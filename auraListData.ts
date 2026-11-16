@@ -1,5 +1,5 @@
 // Aura 現貨清單（由 Google 試算表「Availability Lists」轉出，不要手改）。
-// 更新方式：重新匯出試算表 CSV → 用轉檔腳本重產這個檔。
+// 更新方式：重新匯出試算表 CSV → node scripts/convert-aura-list.cjs <csv> auraListData.ts
 
 export interface AuraListItem {
   id: string;          // Aura 的個體編號
