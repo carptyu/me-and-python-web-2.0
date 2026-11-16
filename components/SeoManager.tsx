@@ -21,6 +21,10 @@ const PAGES: Record<string, PageSeo> = {
         title: `基因檢測服務 | ${BRAND}`,
         description: '球蟒基因檢測代送服務：一片蛇蛻，不抽血、不麻醉，檢測隱性基因與性別。',
     },
+    '/vendor/aurareptiles/appendix': {
+        title: `Aura 現貨清單 | ${BRAND}`,
+        description: 'Aura 在售球蟒清單：可依基因、性別、成熟度搜尋篩選，美元價格一目了然，看到喜歡的直接私訊迷蟒代購。',
+    },
     '/import-terms': {
         title: `海外進口代購交易細則 | ${BRAND}`,
         description: '迷蟒海外進口代購的訂金、付款、運輸與售後交易細則。',
